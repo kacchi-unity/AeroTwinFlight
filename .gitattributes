@@ -1,0 +1,2 @@
+*.asset linguist-documentation=false linguist-vendored=true
+*.meta linguist-documentation=false linguist-vendored=true
