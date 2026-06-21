@@ -1,8 +1,8 @@
 #include <Wire.h>
 
 const int MPU_ADDR = 0x68; // MPU 고유 주소
-int16_t ax, ay, az;        // 가속도
-int16_t gx, gy, gz;        // 자이로 각속도
+int16_t ax, ay, az;        // 가속도 Raw Data
+int16_t gx, gy, gz;        // 자이로 각속도 Raw Data
 
 const float aCoeff = 16384;
 const float gCoeff = 131;
@@ -40,25 +40,27 @@ void loop()
   gy = Wire.read() << 8 | Wire.read();
   gz = Wire.read() << 8 | Wire.read();
 
-  //Serial Monitor test
-  Serial.print("가속도 X: "); Serial.print(ax/aCoeff); Serial.print(" g");
-  Serial.print(" | Y: "); Serial.print(ay/aCoeff); Serial.print(" g");
-  Serial.print(" | Z: "); Serial.print(az/aCoeff); Serial.print(" g");
+  Serial.println(gy);
+
+  // //Serial Monitor test
+  // Serial.print("가속도 X: "); Serial.print(ax/aCoeff); Serial.print(" g");
+  // Serial.print(" | Y: "); Serial.print(ay/aCoeff); Serial.print(" g");
+  // Serial.print(" | Z: "); Serial.print(az/aCoeff); Serial.print(" g");
   
-  Serial.print("  ||  자이로 X: "); Serial.print(gx/gCoeff); Serial.print(" °/s");
-  Serial.print(" | Y: "); Serial.print(gy/gCoeff); Serial.print(" °/s");
-  Serial.print(" | Z: "); Serial.print(gz/gCoeff); Serial.println(" °/s");
+  // Serial.print("  ||  자이로 X: "); Serial.print(gx/gCoeff); Serial.print(" °/s");
+  // Serial.print(" | Y: "); Serial.print(gy/gCoeff); Serial.print(" °/s");
+  // Serial.print(" | Z: "); Serial.print(gz/gCoeff); Serial.println(" °/s");
 
-  //Serial Plotter test
-  float dataX = gx/gCoeff;
-  float dataY = gy/gCoeff;
-  float dataZ = gz/gCoeff;
+  // //Serial Plotter test
+  // float dataX = gx/gCoeff;
+  // float dataY = gy/gCoeff;
+  // float dataZ = gz/gCoeff;
 
-  Serial.print("Min:-250.0 "); 
-  Serial.print("Max:250.0 ");
-  Serial.print("dataX:"); Serial.print(dataX); Serial.print(" ");
-  Serial.print("dataY:"); Serial.print(dataY); Serial.print(" ");
-  Serial.print("dataZ:"); Serial.print(dataZ); Serial.print(" ");
+  // Serial.print("Min:-250.0 "); 
+  // Serial.print("Max:250.0 ");
+  // Serial.print("dataX:"); Serial.print(dataX); Serial.print(" ");
+  // Serial.print("dataY:"); Serial.print(dataY); Serial.print(" ");
+  // Serial.print("dataZ:"); Serial.print(dataZ); Serial.print(" ");
 
-  delay(10); // 0.2 seconds
+  delay(20); // 0.2 seconds
 }
