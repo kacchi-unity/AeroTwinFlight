@@ -7,6 +7,9 @@ int16_t gx, gy, gz;        // 자이로 각속도 Raw Data
 const float aCoeff = 16384;
 const float gCoeff = 131;
 
+const int buttonPin = 2;
+int lastButtonState = HIGH;
+
 void setup()
 {
   Serial.begin(115200);
@@ -19,6 +22,8 @@ void setup()
   Wire.endTransmission();
   
   Serial.println("Editor: MPU6050 is on...");
+
+  pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop()
@@ -40,7 +45,8 @@ void loop()
   gy = Wire.read() << 8 | Wire.read();
   gz = Wire.read() << 8 | Wire.read();
 
-  Serial.println(gy);
+  Serial.print(gx); Serial.print(",");
+  Serial.print(gy); Serial.print(",");
 
   // //Serial Monitor test
   // Serial.print("가속도 X: "); Serial.print(ax/aCoeff); Serial.print(" g");
@@ -62,5 +68,17 @@ void loop()
   // Serial.print("dataY:"); Serial.print(dataY); Serial.print(" ");
   // Serial.print("dataZ:"); Serial.print(dataZ); Serial.print(" ");
 
+  int buttonState = digitalRead(buttonPin);
+  int clickSignal = 0;
+  if (buttonState == LOW && lastButtonState == HIGH)
+  {
+    clickSignal = 1;
+    delay(10);
+  }
+
+  lastButtonState = buttonState;
+
+  Serial.print(clickSignal);
+  Serial.println();
   delay(20); // 0.2 seconds
 }
