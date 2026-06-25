@@ -33,7 +33,7 @@
 - Raw Data를 유의미한 정제 데이터로 처리하는 기능 추가 (MPU6050 기울기, 아두이노 버튼 클릭)
 - 원하는 시점에 기울기 데이터를 보정하는 기능 추가
 - 기울기의 초기 Offset 계산 및 적용, 조작 없을 시 가지고 있는 센서 고유 오차 보정 가능
-- ![기울기 데이터 Offset 보정 테스트]()
+- ![기울기 데이터 Offset 보정 테스트](https://github.com/user-attachments/assets/39a0ca56-4712-41bf-ab06-735bac9307a8)
 
 ## 기술적 도전 (Technical Challenges)
 ### 유니티 멀티 스레드 및 싱글 스레드 프레임 테스트
