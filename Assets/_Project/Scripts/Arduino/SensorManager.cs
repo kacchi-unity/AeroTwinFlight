@@ -3,24 +3,25 @@ using UnityEngine;
 
 public class SensorManager : MonoBehaviour
 {
-    public static event Action<short, short> OnMPUDataUpdated;
+    public static event Action<MPU6050Data> OnMPUDataUpdated;
     public static event Action OnButtonDown;
 
     private void OnEnable()
     {
-        SerialManager.OnRawDataReceived += SendRawData;
+        SerialManager.OnRawDataReceived += SplitAndDistributeRawData;
     }
 
     private void OnDisable()
     {
-        SerialManager.OnRawDataReceived -= SendRawData;
+        SerialManager.OnRawDataReceived -= SplitAndDistributeRawData;
     }
 
-    void SendRawData(ArduinoSensorData rawDatas)
+    void SplitAndDistributeRawData(ArduinoSensorData totalRawDatas)
     {
-        OnMPUDataUpdated?.Invoke(rawDatas.gyroX, rawDatas.gyroY);
+        MPU6050Data mpuDatas = new MPU6050Data(totalRawDatas);
+        OnMPUDataUpdated?.Invoke(mpuDatas);
 
-        if (rawDatas.isButtonPressed)
+        if (totalRawDatas.isButtonPressed)
         {
             OnButtonDown?.Invoke();
         }

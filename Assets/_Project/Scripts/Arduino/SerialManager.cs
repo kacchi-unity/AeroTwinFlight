@@ -82,6 +82,10 @@ public class SerialManager : MonoBehaviour
                 OnRawDataReceived?.Invoke(localRawDatas);
 
             }
+            else
+            {
+                Debug.LogError("정수 전환 오류: 데이터 토큰을 확인하세요.");
+            }
         }
     }
 

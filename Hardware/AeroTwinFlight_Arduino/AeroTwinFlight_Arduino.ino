@@ -1,8 +1,8 @@
 #include <Wire.h>
 
 const int MPU_ADDR = 0x68; // MPU 고유 주소
-int16_t ax, ay, az;        // 가속도 Raw Data
-int16_t gx, gy, gz;        // 자이로 각속도 Raw Data
+int16_t accelX, accelY, accelZ;        // 가속도 Raw Data
+int16_t gyroX, gyroY, gyroZ;        // 자이로 각속도 Raw Data
 
 const float aCoeff = 16384;
 const float gCoeff = 131;
@@ -37,16 +37,20 @@ void loop()
   Wire.requestFrom(MPU_ADDR, 14, true);
 
   // SDA line data: 10진수 변환
-  ax = Wire.read() << 8 | Wire.read();
-  ay = Wire.read() << 8 | Wire.read();
-  az = Wire.read() << 8 | Wire.read();
+  accelX = Wire.read() << 8 | Wire.read();
+  accelY = Wire.read() << 8 | Wire.read();
+  accelZ = Wire.read() << 8 | Wire.read();
   int16_t temp = Wire.read() << 8 | Wire.read(); // 온도 데이터 미사용
-  gx = Wire.read() << 8 | Wire.read();
-  gy = Wire.read() << 8 | Wire.read();
-  gz = Wire.read() << 8 | Wire.read();
+  gyroX = Wire.read() << 8 | Wire.read();
+  gyroY = Wire.read() << 8 | Wire.read();
+  gyroZ = Wire.read() << 8 | Wire.read();
 
-  Serial.print(gx); Serial.print(",");
-  Serial.print(gy); Serial.print(",");
+  Serial.print(accelX); Serial.print(",");
+  Serial.print(accelY); Serial.print(",");
+  Serial.print(accelZ); Serial.print(",");
+  Serial.print(gyroX); Serial.print(",");
+  Serial.print(gyroY); Serial.print(",");
+  Serial.print(gyroZ); Serial.print(",");
 
   // //Serial Monitor test
   // Serial.print("가속도 X: "); Serial.print(ax/aCoeff); Serial.print(" g");

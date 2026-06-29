@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
-using System.Xml.Serialization;
-using Unity.VisualScripting;
+using System;
 
 public class MPU6050DataConverter : MonoBehaviour
 {
-    [Header("센서 설정 (Unity 내 계산)")]
-    private const float gCoeff = 131f;
-    float gyOffset = 0;
-    float gxOffset = 0;
-
-    [Header("자동 보정 설정")]
+    [Header("자동 보정 시간 설정")]
     [SerializeField] private float calibrationTimeSeconds = 3f;
-    private bool isCalibrating = false;
-    private List<short> xCalibrationList = new List<short>();
-    private List<short> yCalibrationList = new List<short>();
+
     private WaitForSeconds waitCalibrationDuration;
 
-    [Header("Test")]
-    [SerializeField] private Transform t;
+    private bool isCalibrating = false;
+
+    private List<MPU6050Data> calibrationTargetList = new List<MPU6050Data>();
+
+    private MPU6050OffsetData calibrationOffsetResult;
+
+    private const float accelCoeff = 16384;
+    private const float gyroCoeff = 131f;
+
+    public static event Action<MPU6050Data> OnDataCalibrated;
 
     private void OnEnable()
     {
@@ -29,6 +29,29 @@ public class MPU6050DataConverter : MonoBehaviour
     private void OnDisable()
     {
         SensorManager.OnMPUDataUpdated -= ProcessMPUData;
+    }
+
+    private void ProcessMPUData(MPU6050Data rawDatas)
+    {
+        if (isCalibrating)
+        {
+            calibrationTargetList.Add(rawDatas);
+        }
+
+        else
+        {
+            MPU6050Data calibratedData = new MPU6050Data();
+
+            calibratedData.accelX = (rawDatas.accelX - calibrationOffsetResult.accelX) / accelCoeff;
+            calibratedData.accelY = (rawDatas.accelY - calibrationOffsetResult.accelY) / accelCoeff;
+            calibratedData.accelZ = ((rawDatas.accelZ - calibrationOffsetResult.accelZ) / accelCoeff) + 1.0f;
+
+            calibratedData.gyroX = (rawDatas.gyroX - calibrationOffsetResult.gyroX) / gyroCoeff;
+            calibratedData.gyroY = (rawDatas.gyroY - calibrationOffsetResult.gyroY) / gyroCoeff;
+            calibratedData.gyroZ = (rawDatas.gyroZ - calibrationOffsetResult.gyroZ) / gyroCoeff;
+
+            OnDataCalibrated?.Invoke(calibratedData);
+        }
     }
 
     //Zero allocation
@@ -47,66 +70,61 @@ public class MPU6050DataConverter : MonoBehaviour
 
     void CommandProcessCalibrate()
     {
-        StartCoroutine(CountCalibrateTime(calibrationTimeSeconds));
+        StartCoroutine(CountCalibrateTime());
         Debug.Log($"{calibrationTimeSeconds}초 동안 센서를 움직이지 마세요. 보정 중...");
     }
 
-    private void ProcessMPUData(short gyroX, short gyroY)
+    IEnumerator CountCalibrateTime()
     {
-        if (isCalibrating)
-        {
-            xCalibrationList.Add(gyroX);
-            yCalibrationList.Add(gyroY);
-        }
-        else
-        {
-            float finalGx = (gyroX - gxOffset) / gCoeff;
-            float finalGy = (gyroY - gyOffset) / gCoeff;
-
-            t.Translate(finalGy / 100f, 0, -finalGx / 100f);
-
-            /*Debug.Log(
-                $"계산값:\t x축 {finalGx,7:F2}°/s \ty축 {finalGy,7:F2}°/s\t || " +
-                $"보정값:\t offset X: {(gxOffset / gCoeff),7:F2}\t offset Y: {(gyOffset / gCoeff),7:F2}"
-                );*/
-        }
-    }
-
-    IEnumerator CountCalibrateTime(float duration)
-    {
-        xCalibrationList.Clear();
-        yCalibrationList.Clear();
+        calibrationTargetList.Clear();
 
         isCalibrating = true;
-        yield return new WaitForSeconds(duration);
+        yield return waitCalibrationDuration;
         CalculateOffsets();
         isCalibrating = false;
     }
 
     private void CalculateOffsets()
     {
-        if (xCalibrationList.Count == 0 && yCalibrationList.Count == 0)
+        if (calibrationTargetList.Count == 0)
         {
             Debug.LogWarning("보정 실패: 수집된 데이터를 찾을 수 없음. 연결을 확인하세요.");
             return;
         }
 
-        long sumX = 0;
-        foreach (short target in xCalibrationList)
-        {
-            sumX += target;
-        }
-        gxOffset = (sumX / (float)xCalibrationList.Count);
+        //1회성 벡터 데이터
+        Vector3 accelData = Vector3.zero;
+        Vector3 gyroData = Vector3.zero;
 
-        long sumY = 0;
-        foreach (short target in yCalibrationList)
+        foreach (var data in calibrationTargetList)
         {
-            sumY += target;
+            accelData.x += data.accelX;
+            accelData.y += data.accelY;
+            accelData.z += data.accelZ;
+
+            gyroData.x += data.gyroX;
+            gyroData.y += data.gyroY;
+            gyroData.z += data.gyroZ;
         }
-        gyOffset = (sumY / (float)yCalibrationList.Count);
+
+        int dataNum = calibrationTargetList.Count;
+
+        accelData /= dataNum;
+        gyroData /= dataNum;
+
+        calibrationOffsetResult = new MPU6050OffsetData(
+            accelData.x,
+            accelData.y,
+            accelData.z,
+
+            gyroData.x,
+            gyroData.y,
+            gyroData.z
+            );
 
         isCalibrating = false;
-        Debug.Log($"구해진 X 오프셋: {gxOffset:F4}, Y 오프셋: {gyOffset:F4}");
+        Debug.Log($"[계산된 가속도 오프셋] x: {accelData.x:F4}, y: {accelData.y}, z: {accelData.z}");
+        Debug.Log($"[계산된 자이로 오프셋] X: {gyroData.x:F4}, y: {gyroData.y}, z: {gyroData.z}");
 
     }
 }
