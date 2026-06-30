@@ -2,6 +2,7 @@ using UnityEngine;
 using System.IO.Ports;
 using System.Threading;
 using System;
+using System.Collections.Concurrent;
 
 
 public class SerialManager : MonoBehaviour
@@ -15,10 +16,10 @@ public class SerialManager : MonoBehaviour
     private SerialPort stream;
     private Thread receiveThread;
     private bool isRunning = false;
-    private string rawDataString = "";
-    private readonly object lockObject = new object();
     private int[] intBuffer = new int[0];
     public static event Action<ArduinoSensorData> OnRawDataReceived;
+
+    private ConcurrentQueue<string> dataQueue = new ConcurrentQueue<string>();
 
     void Start()
     {
@@ -43,49 +44,40 @@ public class SerialManager : MonoBehaviour
 
     void Update()
     {
-        string localRawData = null;
+        string[] stringDataToken = null;
 
-        lock (lockObject)
+        while (dataQueue.TryDequeue(out string localRawData))
         {
-            if (!string.IsNullOrEmpty(rawDataString))
+            stringDataToken = localRawData.Split(",");
+        }
+
+        //Only once when change data element number!
+        if (intBuffer.Length != stringDataToken.Length && stringDataToken!=null)
+        {
+            intBuffer = new int[stringDataToken.Length];
+        }
+
+        bool isIntCheckSusses = true;
+
+        for (int i = 0; i < stringDataToken.Length; i++)
+        {
+            if (!int.TryParse(stringDataToken[i], out intBuffer[i]))
             {
-                localRawData = rawDataString;
-                rawDataString = "";
+                isIntCheckSusses = false;
+                break;
             }
         }
 
-        if (localRawData != null)
+        //Check total try parse string to int
+        if (isIntCheckSusses && intBuffer.Length > 0)
         {
-            string[] stringDataToken = localRawData.Split(",");
+            ArduinoSensorData localRawDatas = ArduinoSensorData.ParseData(intBuffer);
+            OnRawDataReceived?.Invoke(localRawDatas);
 
-            //Only once when change data element number!
-            if (intBuffer.Length != stringDataToken.Length)
-            {
-                intBuffer = new int[stringDataToken.Length];
-            }
-
-            bool isIntCheckSusses = true;
-
-            for (int i = 0; i < stringDataToken.Length; i++)
-            {
-                if (!int.TryParse(stringDataToken[i], out intBuffer[i]))
-                {
-                    isIntCheckSusses = false;
-                    break;
-                }
-            }
-
-            //Check total try parse string to int
-            if(isIntCheckSusses && intBuffer.Length > 0)
-            {
-                ArduinoSensorData localRawDatas = ArduinoSensorData.ParseData(intBuffer);
-                OnRawDataReceived?.Invoke(localRawDatas);
-
-            }
-            else
-            {
-                Debug.LogError("정수 전환 오류: 데이터 토큰을 확인하세요.");
-            }
+        }
+        else
+        {
+            Debug.LogError("정수 전환 오류: 데이터 토큰을 확인하세요.");
         }
     }
 
@@ -97,18 +89,9 @@ public class SerialManager : MonoBehaviour
             {
                 string incomingData = stream.ReadLine();
 
-                //Avoid serial buffer overflow
-                while (stream.BytesToRead > 0)
-                {
-                    incomingData = stream.ReadLine();
-                }
-
                 if (!string.IsNullOrEmpty(incomingData))
                 {
-                    lock (lockObject)
-                    {
-                        rawDataString = incomingData.Trim();
-                    }
+                    dataQueue.Enqueue(incomingData.Trim());
                 }
             }
             catch (TimeoutException)

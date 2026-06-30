@@ -119,8 +119,8 @@ public class MPU6050DataConverter : MonoBehaviour
             );
 
         isCalibrating = false;
-        Debug.Log($"[계산된 가속도 오프셋] x: {accelData.x:F2}, y: {accelData.y:F2}, z: {accelData.z:F2}");
-        Debug.Log($"[계산된 자이로 오프셋] X: {gyroData.x:F2}, y: {gyroData.y:F2}, z: {gyroData.z:F2}");
+        Debug.Log($"[계산된 가속도 오프셋] x: {accelData.x/ accelCoeff:F2}, y: {accelData.y/ accelCoeff:F2}, z: {accelData.z / accelCoeff:F2}");
+        Debug.Log($"[계산된 자이로 오프셋] X: {gyroData.x/ gyroCoeff:F2}, y: {gyroData.y/ gyroCoeff:F2}, z: {gyroData.z/ gyroCoeff:F2}");
 
         OnCalibrateDone?.Invoke();
 
