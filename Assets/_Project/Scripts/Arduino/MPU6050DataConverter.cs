@@ -19,16 +19,20 @@ public class MPU6050DataConverter : MonoBehaviour
     private const float accelCoeff = 16384;
     private const float gyroCoeff = 131f;
 
-    public static event Action<MPU6050Data> OnDataCalibrated;
+    public static event Action<MPU6050Data> OnDataReady;
+
+    public static event Action OnCalibrateDone;
 
     private void OnEnable()
     {
         SensorManager.OnMPUDataUpdated += ProcessMPUData;
+        CalibrateManager.onStartCalibrate += CommandProcessCalibrate;
     }
 
     private void OnDisable()
     {
         SensorManager.OnMPUDataUpdated -= ProcessMPUData;
+        CalibrateManager.onStartCalibrate -= CommandProcessCalibrate;
     }
 
     private void ProcessMPUData(MPU6050Data rawDatas)
@@ -50,7 +54,7 @@ public class MPU6050DataConverter : MonoBehaviour
             calibratedData.gyroY = (rawDatas.gyroY - calibrationOffsetResult.gyroY) / gyroCoeff;
             calibratedData.gyroZ = (rawDatas.gyroZ - calibrationOffsetResult.gyroZ) / gyroCoeff;
 
-            OnDataCalibrated?.Invoke(calibratedData);
+            OnDataReady?.Invoke(calibratedData);
         }
     }
 
@@ -58,14 +62,6 @@ public class MPU6050DataConverter : MonoBehaviour
     private void Start()
     {
         waitCalibrationDuration = new WaitForSeconds(calibrationTimeSeconds);
-    }
-
-    private void Update() //추후 삭제
-    {
-       if (Input.GetKeyDown(KeyCode.T))
-        {
-            CommandProcessCalibrate();
-        }
     }
 
     void CommandProcessCalibrate()
@@ -123,8 +119,10 @@ public class MPU6050DataConverter : MonoBehaviour
             );
 
         isCalibrating = false;
-        Debug.Log($"[계산된 가속도 오프셋] x: {accelData.x:F4}, y: {accelData.y}, z: {accelData.z}");
-        Debug.Log($"[계산된 자이로 오프셋] X: {gyroData.x:F4}, y: {gyroData.y}, z: {gyroData.z}");
+        Debug.Log($"[계산된 가속도 오프셋] x: {accelData.x:F2}, y: {accelData.y:F2}, z: {accelData.z:F2}");
+        Debug.Log($"[계산된 자이로 오프셋] X: {gyroData.x:F2}, y: {gyroData.y:F2}, z: {gyroData.z:F2}");
+
+        OnCalibrateDone?.Invoke();
 
     }
 }
