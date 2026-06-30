@@ -47,8 +47,9 @@
 - 비행기 오브젝트 내 아두이노 정제 각속도 데이터 값과 쿼터니안 회전 적용
 - 보정(초기화) 기능 추가: 비행기 오브젝트의 회전 움직임을 멈추고 동시에 보정을 진행하는 기능. 보정 완료 후 Action 유니티 이벤트 호출을 통해 보정 값으로 회전 재개 가능.
 
-![비행기 오브젝트 보정 기능]()
+![비행기 오브젝트 보정 기능](https://github.com/user-attachments/assets/5830f503-e9d2-4125-976a-d26f2f82199a)
 > 실제로 센서 보드로 기울기 감지 작동 중
+> 센서 데이터 출력 주기를 보기 쉽게 출력 속도를 1/10배로 적용함. 실제 데이터 출력량은 10배 많고 빠름
 
 ## 기술적 도전 (Technical Challenges)
 ### 유니티 멀티 스레드 및 싱글 스레드 프레임 테스트
@@ -56,10 +57,10 @@
 - **테스트 내용**:
 - Thread.Sleep(200)을 이용해, 멀티스레드 미사용 시와 사용 시 게임 씬 내 테스트 큐브 회전 퍼포먼스 대조 실험.
 - 싱글 스레드 환경(Test_NotUseThread.cs): 매 프레임 마다 생기는 메인 스레드의 0.2초 지연으로 인해 프레임 드랍이 일어남.
-- ![싱글 스레드 프레임 테스트](https://private-user-images.githubusercontent.com/262567585/610849576-3791c235-72be-4928-8fe5-0c91bf67e7a9.gif?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODIwMzAxMzMsIm5iZiI6MTc4MjAyOTgzMywicGF0aCI6Ii8yNjI1Njc1ODUvNjEwODQ5NTc2LTM3OTFjMjM1LTcyYmUtNDkyOC04ZmU1LTBjOTFiZjY3ZTdhOS5naWY_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNjIxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDYyMVQwODE3MTNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0xODI2ZTA3MzgxYjNlY2Y4YTBlNjkzOTM0YmI3YmI2ZTM5MjJkMGFhNjhjY2UxMDFkMzIzOGUxODVmNjQzMzNhJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZnaWYifQ.TiwObPiS8hvzFqI6B8YPezCkqPD743kSZZyqyzD1dhc)
+- ![싱글 스레드 프레임 테스트](https://github.com/user-attachments/assets/3791c235-72be-4928-8fe5-0c91bf67e7a9)
 
 - 멀티 스레드 환경(Test_Thread.cs): 서브 스레드 선언 및 처리를 통해 매 반복문 내 0.2초 또는 그 이상으로 지연을 주어도 메인 스레드의 렌더링 처리에 영향을 주지 않음. 매끄러운 프레임 유지
-- ![멀티 스레드 프레임 테스트](https://private-user-images.githubusercontent.com/262567585/610849575-0bfa55d8-41db-479b-9acf-c14b8e732338.gif?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODIwMzAxMzMsIm5iZiI6MTc4MjAyOTgzMywicGF0aCI6Ii8yNjI1Njc1ODUvNjEwODQ5NTc1LTBiZmE1NWQ4LTQxZGItNDc5Yi05YWNmLWMxNGI4ZTczMjMzOC5naWY_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNjIxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDYyMVQwODE3MTNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hZTk2Yjc1ZTMzN2IzZDFhNTM4YTQ5MmE2NDRhODIxMTQ2ZDM2YjA1ODU0MzdlMWJmYWQ4NWRiYjliZGQzNGY4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZnaWYifQ.xOk892XHqXKGM5DN6sgHXDl4tvkQL-Qolt5YGbp9SU8)
+- ![멀티 스레드 프레임 테스트](https://github.com/user-attachments/assets/0bfa55d8-41db-479b-9acf-c14b8e732338)
 - **핵심 성과**: 아두이노 Raw Data 처리를 메인-서브 스레드 간 안전한 데이터 교환 구조로 처리하도록 계획할 수 있게됨.
 
 ### 짐벌락 처리 및 쿼터니안 사용
