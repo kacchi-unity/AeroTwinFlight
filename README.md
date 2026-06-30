@@ -49,6 +49,7 @@
 
 ![비행기 오브젝트 보정 기능](https://github.com/user-attachments/assets/5830f503-e9d2-4125-976a-d26f2f82199a)
 > 실제로 센서 보드로 기울기 감지 작동 중
+
 > 센서 데이터 출력 주기를 보기 쉽게 출력 속도를 1/10배로 적용함. 실제 데이터 출력량은 10배 많고 빠름
 
 ## 기술적 도전 (Technical Challenges)
