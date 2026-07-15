@@ -1,9 +1,7 @@
 // ====================================================================
 // * 아두이노 통신 프로토콜 규칙
-// * 아두이노 전송 형태: "데이터1,데이터2, ... \n"
-// (ex: "512,1\n")
 // 
-// index [0] : x축 각속도 (short)
+// index [0] : x축 각속도 (short, 16bit)
 // index [1] : y축 각속도 (short)
 // index [2] : z축 각속도 (short)
 
@@ -75,5 +73,10 @@ public struct ArduinoSensorData
         data.isButtonPressed = ( rawDatas[(int)DataIndex.IsButtonPressed] == 1 );
 
         return data;
+    }
+
+    public int GetTotalDataCount()
+    {
+        return (int)DataIndex.TotalDataCount;
     }
 }

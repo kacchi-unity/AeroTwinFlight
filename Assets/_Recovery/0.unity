@@ -440,8 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e94bb47a2382c9142b20af362bd2538b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlightRotationManager
-  rotaionSpeed: 1
-  gyroWeight: 0.96
+  rotaionSpeed: 1.5
 --- !u!1 &534717720
 GameObject:
   m_ObjectHideFlags: 0

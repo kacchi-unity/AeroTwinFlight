@@ -1,5 +1,15 @@
 #include <Wire.h>
 
+struct DataPacket {
+  int16_t accelX;
+  int16_t accelY;
+  int16_t accelZ;
+  int16_t gyroX;
+  int16_t gyroY;
+  int16_t gyroZ;
+  int16_t clickSignal;
+}__attribute__((packed));
+
 const int MPU_ADDR = 0x68; // MPU 고유 주소
 int16_t accelX, accelY, accelZ;        // 가속도 Raw Data
 int16_t gyroX, gyroY, gyroZ;        // 자이로 각속도 Raw Data
@@ -28,6 +38,9 @@ void setup()
 
 void loop()
 {
+  //Data register
+  DataPacket packet;
+
   // 0x3B: 필요 데이터 시작 레지스터 주소 (가속도 x축)
   Wire.beginTransmission(MPU_ADDR);
   Wire.write(0x3B); 
@@ -37,22 +50,50 @@ void loop()
   Wire.requestFrom(MPU_ADDR, 14, true);
 
   // SDA line data: 10진수 변환
-  accelX = Wire.read() << 8 | Wire.read();
-  accelY = Wire.read() << 8 | Wire.read();
-  accelZ = Wire.read() << 8 | Wire.read();
+  packet.accelX = Wire.read() << 8 | Wire.read();
+  packet.accelY = Wire.read() << 8 | Wire.read();
+  packet.accelZ = Wire.read() << 8 | Wire.read();
   int16_t temp = Wire.read() << 8 | Wire.read(); // 온도 데이터 미사용
-  gyroX = Wire.read() << 8 | Wire.read();
-  gyroY = Wire.read() << 8 | Wire.read();
-  gyroZ = Wire.read() << 8 | Wire.read();
+  packet.gyroX = Wire.read() << 8 | Wire.read();
+  packet.gyroY = Wire.read() << 8 | Wire.read();
+  packet.gyroZ = Wire.read() << 8 | Wire.read();
 
-  Serial.print(accelX); Serial.print(",");
-  Serial.print(accelY); Serial.print(",");
-  Serial.print(accelZ); Serial.print(",");
-  Serial.print(gyroX); Serial.print(",");
-  Serial.print(gyroY); Serial.print(",");
-  Serial.print(gyroZ); Serial.print(",");
+  //Button signal
+  int buttonState = digitalRead(buttonPin);
+  int clickSignal = 0;
+  if (buttonState == LOW && lastButtonState == HIGH)
+  {
+    clickSignal = 1;
+  }
+  lastButtonState = buttonState;
+  packet.clickSignal = (int16_t)clickSignal;
+ 
+  //Send data packet
+  Serial.write(0xAA); //Header
+  Serial.write(0xBB);
+  Serial.write((uint8_t)sizeof(packet)); //Packet size (if n Byte, Send n)
+  //Serial.write(시작 주소, 보낼 크기)
+  //uint8_t* = 8비트씩 쪼갠 array로 취급 (시리얼 통신 = 8비트씩 전송)
+  Serial.write((uint8_t*)&packet, sizeof(packet));
+  Serial.write(0xCC); //Trailer
+  Serial.write(0xDD);
+  
 
-  // //Serial Monitor test
+  /*
+//Serial Monitor test
+  Serial.print("가속도 X: "); Serial.print(packet.accelX); Serial.print(" g");
+  Serial.print(" | Y: "); Serial.print(packet.accelY); Serial.print(" g");
+  Serial.print(" | Z: "); Serial.print(packet.accelZ); Serial.print(" g");
+  
+  Serial.print("  ||  자이로 X: "); Serial.print(packet.gyroX); Serial.print(" °/s");
+  Serial.print(" | Y: "); Serial.print(packet.gyroY); Serial.print(" °/s");
+  Serial.print(" | Z: "); Serial.print(packet.gyroZ); Serial.println(" °/s");
+*/
+
+  delay(20); // 0.02 seconds
+}
+
+// //Serial Monitor test
   // Serial.print("가속도 X: "); Serial.print(ax/aCoeff); Serial.print(" g");
   // Serial.print(" | Y: "); Serial.print(ay/aCoeff); Serial.print(" g");
   // Serial.print(" | Z: "); Serial.print(az/aCoeff); Serial.print(" g");
@@ -71,18 +112,3 @@ void loop()
   // Serial.print("dataX:"); Serial.print(dataX); Serial.print(" ");
   // Serial.print("dataY:"); Serial.print(dataY); Serial.print(" ");
   // Serial.print("dataZ:"); Serial.print(dataZ); Serial.print(" ");
-
-  int buttonState = digitalRead(buttonPin);
-  int clickSignal = 0;
-  if (buttonState == LOW && lastButtonState == HIGH)
-  {
-    clickSignal = 1;
-    delay(10);
-  }
-
-  lastButtonState = buttonState;
-
-  Serial.print(clickSignal);
-  Serial.println();
-  delay(20); // 0.2 seconds
-}
