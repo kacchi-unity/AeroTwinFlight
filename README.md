@@ -156,9 +156,9 @@ Split을 사용 시, 기존 String 데이터 토큰을 쪼개 같은 주소에 �
 같은 조건에서 센서를 초기 상태로 가만히 둔채 40분동안 두고 자이로 센서의 드리프트 현상을 비교 테스트함.
 
 <p align="center">
-  <video src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" autoplay loop muted playsinline></video>
-</p>
-> 런타임 드리프트 테스트 (40분, 32배속)
+  <video src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" autoplay loop muted playsinline></video></p>
+  
+> 런타임 드리프트 테스트 (40분, 32배속)  
 
 자이로 가중치가 1인 비행기 오브젝트만 시간이 경과함에 따라 미세하게 한쪽으로 쏠리는 드리프트 현상이 생김.
 반면, 가속도 가중치가 크거나 조금이라도 적용된 오브젝트는 드리프트 현상이 일어나지 않음.
@@ -217,6 +217,7 @@ MPU6050 센서를 이용한 상보 필터 적용으로 Roll과 Pitch의 기울�
 <p align="center">
   <video src="https://github.com/user-attachments/assets/2d346bdb-9cf4-4571-8f8b-09c72ea866bc" width="100%" autoplay loop muted playsinline></video>
 </p>
+
 > 수평 방위각 Yaw 드리프트 테스트 (17분, 32배속)
 
 센서를 가만히 놔두고 17분간 런타임을 진행하였음. 상보필터가 얼마가 적용되던 네 오브젝트 모두 특정 방향으로 쏠리는 오차 누적 현상이 발생함.
