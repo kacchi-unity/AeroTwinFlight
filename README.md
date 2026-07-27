@@ -147,7 +147,7 @@ Split을 사용 시, 기존 String 데이터 토큰을 쪼개 같은 주소에 �
 - 실시간 런타임 회전 테스트
 센서를 직접 좌우, 상하, 양옆으로 움직이며 오브젝트 떨림의 정도의 비교를 진행함.
 
-![Rotation_Test](...주소)
+![Rotation_Test](https://github.com/user-attachments/assets/be3edbf3-f6ad-422f-a16d-632f1b554965)
 > 실시간 런타임 회전 테스트
 
 자이로 가중치가 클수록 오브젝트 회전이 부드러움. 반대로 자이로 가중치가 작을수록 오브젝트의 떨림 커짐.
