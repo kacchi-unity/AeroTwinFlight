@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1340990538901309394}
   - component: {fileID: 7237276200145412142}
+  - component: {fileID: 6549735393379715012}
   m_Layer: 0
   m_Name: PlayerFlight_Prefab
   m_TagString: Untagged
@@ -47,6 +48,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlightRotationManager
   rotationSpeed: 1
   gyroWeight: 0.96
+--- !u!114 &6549735393379715012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2f988619aec39a4186c5b85ac8bf48a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightEngineController
+  flightRigidbody: {fileID: 0}
+  enginePower: 5
 --- !u!1 &783591563108718537
 GameObject:
   m_ObjectHideFlags: 0
