@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FlightRotationController : MonoBehaviour
 {
-    [Header("Rotation Speed")]
+    [Header("회전 감도 설정")]
     [SerializeField] private float rotationSpeed = 1f;
 
     [Header("상보 필터(Complementary Filter) 자이로 계수 [0 ~ 1]")]
