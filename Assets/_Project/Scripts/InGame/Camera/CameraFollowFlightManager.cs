@@ -17,7 +17,8 @@ public class CameraFollowFlightManager : MonoBehaviour
             enabled = false;
             return;
         }
-
+        
+        //World Position -> Local Position
         positionOffset = targetFlight.InverseTransformPoint(targetCamera.position);
 
         rotationOffset = Quaternion.Inverse(targetFlight.rotation) * targetCamera.rotation;
@@ -25,6 +26,7 @@ public class CameraFollowFlightManager : MonoBehaviour
 
     void LateUpdate()
     {
+        //Local Position -> World Position
         targetCamera.position = targetFlight.TransformPoint(positionOffset);
 
         targetCamera.rotation = targetFlight.rotation * rotationOffset;

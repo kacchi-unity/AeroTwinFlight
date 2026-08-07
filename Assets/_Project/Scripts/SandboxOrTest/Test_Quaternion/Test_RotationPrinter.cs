@@ -3,22 +3,15 @@ using UnityEngine;
 
 public class Test_RotationPrinter : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI text_1;
-    [SerializeField] private TextMeshProUGUI text_0_96;
-    [SerializeField] private TextMeshProUGUI text_0_5;
-    [SerializeField] private TextMeshProUGUI text_0;
+    [SerializeField] private TextMeshProUGUI text;
 
-    [SerializeField] private Transform rotate_1;
-    [SerializeField] private Transform rotate_0_96;
-    [SerializeField] private Transform rotate_0_5;
-    [SerializeField] private Transform rotate_0;
+    [SerializeField] private Transform rotate;
 
     void Update()
     {
-        text_1.text = $"Rotation X: {FormatAngle(GetInspectorAngle(rotate_1.eulerAngles.x))}°\nRotation Z: {FormatAngle(GetInspectorAngle(rotate_1.eulerAngles.z))}°";
-        text_0_96.text = $"Rotation X: {FormatAngle(GetInspectorAngle(rotate_0_96.eulerAngles.x))}°\nRotation Z: {FormatAngle(GetInspectorAngle(rotate_0_96.eulerAngles.z))}°";
-        text_0_5.text = $"Rotation X: {FormatAngle(GetInspectorAngle(rotate_0_5.eulerAngles.x))}°\nRotation Z: {FormatAngle(GetInspectorAngle(rotate_0_5.eulerAngles.z))}°";
-        text_0.text = $"Rotation X: {FormatAngle(GetInspectorAngle(rotate_0.eulerAngles.x))}°\nRotation Z: {FormatAngle(GetInspectorAngle(rotate_0.eulerAngles.z))}°";
+        Vector3 currentRot = rotate.localEulerAngles;
+
+        text.text = $"Rotation X: {FormatAngle(GetInspectorAngle(currentRot.x))}°";
     }
 
     private float GetInspectorAngle(float angle)
