@@ -236,10 +236,10 @@ MPU6050 센서 자체 라이브러리를 통해 쿼터니안 및 상보필터를
 기존 절대적 미러 모드(Absolute)와 자세 제어 모드 (Attitude Control)를 적용한 오브젝트의 제어를 테스트함.  
 같은 MPU6050 센서를 사용하면서 각각 Yaw, Roll, Pitch 단일 회전을 순서대로 제어함.
 
-![Absolute Test]()
+![Absolute Test](https://github.com/user-attachments/assets/3a95a058-27a6-4521-a3ce-ceb17b09c7ba)
 > 절대적 미러 모드(Absolute) 회전 제어 테스트
 
-![Attitude Test]()
+![Attitude Test](https://github.com/user-attachments/assets/05094d72-3050-4d8c-8b69-b956b1dc11ce)
 > 자세 제어 모드 (Attitude Control) 회전 제어 테스트
 
 | 구분 | 절대적 미러 모드 (Mirror Mode) | 자세 제어 모드 (Attitude Control) |
@@ -272,7 +272,7 @@ AC 모드에서는 센서 쿼터니언에서 오직 월드 Y축(높이) 성분�
 pitch를 추출 시 이용한 Asin은 치환 결과값 범위가 -90도 ~ 90도로 제한될 수 밖에 없어 절대 모드와 달리 AC모드에서는 90도 초과 회전 표현이 불가능함.
 그렇기에 최대 입력 한계각(maxInputTiltAngle, 예: 45도)을 두어 Power로 매핑하므로 각도 제한이 실질적인 조작에 영향을 주지 않도록 함.
 
-- 본 프로젝트는 Attitude Control 모드를 사용하며 사용자 설정 기능으로 절대적 미러모드와 자세 제어 모드를 선택할 수 있도록 구현함.
+- 본 프로젝트는 Attitude Control 모드를 사용하며, 사용자 설정 기능으로 절대적 미러모드와 자세 제어 모드를 선택할 수 있도록 구현함.
 
 ## 트러블 슈팅
 ### 바이트 스트림 데이터 패킷과 Concurrent Queue 호환 문제
