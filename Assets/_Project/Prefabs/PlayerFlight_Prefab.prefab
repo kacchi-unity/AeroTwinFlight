@@ -10,7 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1340990538901309394}
   - component: {fileID: 7237276200145412142}
+  - component: {fileID: 6078575419664222904}
   - component: {fileID: 6549735393379715012}
+  - component: {fileID: 2586921556144447604}
   m_Layer: 0
   m_Name: PlayerFlight_Prefab
   m_TagString: Untagged
@@ -48,6 +50,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlightRotationManager
   rotationSpeed: 1
   gyroWeight: 0.96
+  isAttutideRotationUse: 0
+--- !u!114 &6078575419664222904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886e7e5a23fd55b4a8d04b644346257e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AttitudeFlightRotationController
+  deadzoneAngle: 4
+  maxInputTiltAngle: 45
+  maxVisibleTurnAngle: 35
+  yawTurnSpeed: 45
+  smoothSpeed: 5
 --- !u!114 &6549735393379715012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,8 +80,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2f988619aec39a4186c5b85ac8bf48a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlightEngineController
-  flightRigidbody: {fileID: 0}
-  enginePower: 5
+  flightRigidbody: {fileID: 2586921556144447604}
+  enginePower: 1
+  velocityAlignmentRate: 0.08
+  minVelocitySqrThreshold: 0.1
+--- !u!54 &2586921556144447604
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &783591563108718537
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,7 +621,7 @@ Transform:
   m_GameObject: {fileID: 6424991369563523730}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.647, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

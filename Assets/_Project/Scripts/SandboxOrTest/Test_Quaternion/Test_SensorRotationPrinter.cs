@@ -1,23 +1,29 @@
 using TMPro;
 using UnityEngine;
 
-public class Test_RotationPrinter : MonoBehaviour
+public class Test_SensorRotationPrinter : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI text;
 
-    [SerializeField] private Transform rotate;
-
-    void Update()
+    private void OnEnable()
     {
-        if (rotate == null || text == null) return;
+        FlightRotationController.OnQuaternionCalculateFinish += ProcessPrintSensorRotation;
+    }
 
-        Vector3 currentRot = rotate.localEulerAngles;
+    private void OnDisable()
+    {
+        FlightRotationController.OnQuaternionCalculateFinish -= ProcessPrintSensorRotation;
+    }
+
+    void ProcessPrintSensorRotation(Quaternion targetQuaternion)
+    {
+        Vector3 currentRot = targetQuaternion.eulerAngles;
 
         float pitch = GetInspectorAngle(currentRot.x); // Rotation X
         float yaw = GetInspectorAngle(currentRot.y);   // Rotation Y
         float roll = GetInspectorAngle(currentRot.z);  // Rotation Z
 
-        text.text = $"Attitude Rotation\n" + 
+        text.text = $"Sensor Rotation\n"+
                     $"Rotation X (Pitch): {FormatAngle(pitch)}°\n" +
                     $"Rotation Y (Yaw): {FormatAngle(yaw)}°\n" +
                     $"Rotation Z (Roll): {FormatAngle(roll)}°";

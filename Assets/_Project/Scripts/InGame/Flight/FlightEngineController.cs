@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FlightEngineController : MonoBehaviour
@@ -11,14 +12,30 @@ public class FlightEngineController : MonoBehaviour
 
     private void OnEnable()
     {
+        CalibrateManager.onStartCalibrate += DisableEnginePower;
         CalibrateManager.onFinishCalibrate += EnableEnginePower;
     }
 
     private void OnDisable()
     {
+        CalibrateManager.onStartCalibrate -= DisableEnginePower;
         CalibrateManager.onFinishCalibrate -= EnableEnginePower;
     }
-    
+
+    void DisableEnginePower()
+    {
+        isEngineAllowed = false;
+
+        if (flightRigidbody != null)
+        {
+            flightRigidbody.linearVelocity = Vector3.zero;
+            flightRigidbody.angularVelocity = Vector3.zero;
+
+            // flightRigidbody.Sleep(); 
+            // flightRigidbody.WakeUp();
+        }
+    }
+
     void EnableEnginePower()
     {
         isEngineAllowed = true;

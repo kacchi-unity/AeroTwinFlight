@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 809.82, y: -453.3}
+  m_AnchoredPosition: {x: 810, y: -437}
   m_SizeDelta: {x: 300.35, y: 168.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &58260870
@@ -176,12 +176,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Rotation X (Pitch): n
+  m_text: ': Attitude Rotation
 
-    Rotation Y (Yaw): m
+    Rotation X (Pitch): -
 
-    Rotation Z (Roll):
-    o'
+    Rotation Y (Yaw):
+    -
+
+    Rotation Z (Roll): -'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1d1a3e9b4a8b3724581740af3880e8e1, type: 2}
   m_sharedMaterial: {fileID: -6838687799334837427, guid: 1d1a3e9b4a8b3724581740af3880e8e1, type: 2}
@@ -385,6 +387,9 @@ Transform:
   - {fileID: 74524201}
   - {fileID: 857128992}
   - {fileID: 519264908}
+  - {fileID: 1269185694}
+  - {fileID: 500049171}
+  - {fileID: 1776229657}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &128425705
@@ -566,60 +571,205 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &466275396 stripped
+--- !u!1 &309177945
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 612030310297159941, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-  m_PrefabInstance: {fileID: 1600827860}
-  m_PrefabAsset: {fileID: 0}
---- !u!54 &466275397
-Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466275396}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!4 &466275400 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1340990538901309394, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-  m_PrefabInstance: {fileID: 1600827860}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &466275403
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 309177948}
+  - component: {fileID: 309177947}
+  - component: {fileID: 309177946}
+  m_Layer: 5
+  m_Name: SensorRotationTest_Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &309177946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466275396}
+  m_GameObject: {fileID: 309177945}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 886e7e5a23fd55b4a8d04b644346257e, type: 3}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttitudeFlightRotationController
-  deadzoneAngle: 4
-  maxInputTiltAngle: 45
-  maxVisibleTurnAngle: 35
-  yawTurnSpeed: 45
-  smoothSpeed: 5
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: ': aa
+
+    Rotation X (Pitch): -
+
+    Rotation Y (Yaw): -
+
+    Rotation
+    Z (Roll): -'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 1d1a3e9b4a8b3724581740af3880e8e1, type: 2}
+  m_sharedMaterial: {fileID: -6838687799334837427, guid: 1d1a3e9b4a8b3724581740af3880e8e1, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 43.8
+  m_fontSizeBase: 43.8
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: -197.50793, y: 0, z: 1.0023804, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &309177947
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309177945}
+  m_CullTransparentMesh: 1
+--- !u!224 &309177948
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309177945}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 11}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2000948548}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 810, y: -148}
+  m_SizeDelta: {x: 300.35, y: 168.5}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!54 &466275397 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 2586921556144447604, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
+  m_PrefabInstance: {fileID: 1600827860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &466275400 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1340990538901309394, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
+  m_PrefabInstance: {fileID: 1600827860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &500049170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 500049171}
+  - component: {fileID: 500049172}
+  m_Layer: 0
+  m_Name: Test_SensorRotationPrinter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &500049171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500049170}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.8165197, y: 0, z: 0.8663807}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 112557925}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &500049172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500049170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d74a2d8606ce1cd4fad4c928e2f745b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Test_SensorRotationPrinter
+  text: {fileID: 309177946}
 --- !u!1 &519264907
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,7 +786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &519264908
 Transform:
   m_ObjectHideFlags: 0
@@ -983,8 +1133,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961739749}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.20636371, y: -0.0014670232, z: 0.0003101373, w: -0.97847426}
-  m_LocalPosition: {x: -3.88, y: 5.81, z: -9.53067}
+  m_LocalRotation: {x: -0.19460778, y: -0.0002937055, z: 0.00005901311, w: -0.9808811}
+  m_LocalPosition: {x: -4.4171906, y: 13.68868, z: -15.955543}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1096,7 +1246,7 @@ Transform:
   m_GameObject: {fileID: 1189449416}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3.7455, y: -3.52, z: 117.84}
+  m_LocalPosition: {x: -3.7455, y: -10.43, z: 117.84}
   m_LocalScale: {x: 38.341087, y: 1, z: 1000}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1146,6 +1296,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eaf1b5b77e8434449491268cddb8be9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArduinoButtonManager
+--- !u!1 &1269185693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1269185694}
+  - component: {fileID: 1269185695}
+  m_Layer: 0
+  m_Name: Test_RotationPrinter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1269185694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269185693}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.8165197, y: 0, z: 0.8663807}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 112557925}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1269185695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269185693}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e6f7af8de5188429aad4028bfe2d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Test_RotationPrinter
+  text: {fileID: 58260870}
+  rotate: {fileID: 466275400}
 --- !u!1001 &1600827860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1202,28 +1398,30 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.647
       objectReference: {fileID: 0}
+    - target: {fileID: 6078575419664222904, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6549735393379715012, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
       propertyPath: enginePower
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6549735393379715012, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-      propertyPath: steeringGrip
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6549735393379715012, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
       propertyPath: flightRigidbody
       value: 
       objectReference: {fileID: 466275397}
+    - target: {fileID: 6549735393379715012, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
+      propertyPath: velocityAlignmentRate
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 7237276200145412142, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
+      propertyPath: isAttutideRotationUse
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 612030310297159941, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 466275403}
-    - targetCorrespondingSourceObject: {fileID: 612030310297159941, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 466275397}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
 --- !u!1 &1605646323
 GameObject:
@@ -1391,6 +1589,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MPU6050DataConverter
   calibrationTimeSeconds: 3
+--- !u!1 &1776229656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1776229657}
+  - component: {fileID: 1776229658}
+  m_Layer: 0
+  m_Name: Test_PositionController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1776229657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1776229656}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.8165197, y: 0, z: 0.8663807}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 112557925}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1776229658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1776229656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0d033317e898034087451cd04e9520c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Test_PositionController
+  targetTransform: {fileID: 466275400}
 --- !u!1 &1791161226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,7 +1877,7 @@ Transform:
   m_GameObject: {fileID: 1922932666}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.7455, y: -3.52, z: 2.2545}
+  m_LocalPosition: {x: -3.7455, y: -10.43, z: 2.2545}
   m_LocalScale: {x: 38.341087, y: 1, z: 1000}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1811,6 +2054,7 @@ RectTransform:
   - {fileID: 534717723}
   - {fileID: 1605646327}
   - {fileID: 58260869}
+  - {fileID: 309177948}
   - {fileID: 1791161227}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

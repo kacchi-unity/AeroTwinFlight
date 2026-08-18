@@ -603,23 +603,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1340990538901309394, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
   m_PrefabInstance: {fileID: 1600827860}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &466275403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466275396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 886e7e5a23fd55b4a8d04b644346257e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttitudeFlightRotationController
-  deadzoneAngle: 4
-  maxInputTiltAngle: 45
-  maxVisibleTurnAngle: 35
-  yawTurnSpeed: 45
-  smoothSpeed: 5
 --- !u!1 &519264907
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +649,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollowFlightManager
   targetFlight: {fileID: 466275400}
   targetCamera: {fileID: 961739753}
-  useRollFollowLock: 0
+  useRollFollowLock: 1
 --- !u!1 &534717720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1218,9 +1201,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 612030310297159941, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 466275403}
     - targetCorrespondingSourceObject: {fileID: 612030310297159941, guid: 5974e0860b4e45944b6724e8ad0e832d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 466275397}
