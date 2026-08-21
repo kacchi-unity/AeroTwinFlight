@@ -15,6 +15,8 @@ public class FlightRotationController : MonoBehaviour
 
     private Quaternion currentRotation = Quaternion.identity;
 
+    private Quaternion initialRotation;
+
     MPU6050Data currentData = new MPU6050Data();
     bool isRotationAllowed = false;
 
@@ -34,6 +36,12 @@ public class FlightRotationController : MonoBehaviour
         CalibrateManager.onFinishCalibrate -= FinishCalibrate;
     }
 
+    void Start()
+    {
+        initialRotation = transform.rotation;
+        currentRotation = initialRotation;
+    }
+
     void SaveData(MPU6050Data targetData)
     {
         currentData = targetData;
@@ -41,14 +49,14 @@ public class FlightRotationController : MonoBehaviour
 
     void StartCalibrate()
     {
-        transform.localRotation = Quaternion.identity;
-        currentRotation = Quaternion.identity;
         isRotationAllowed = false;
         Debug.Log("보정이 시작되어 비행기 회전이 일시 정지됩니다.");
     }
 
     void FinishCalibrate()
     {
+        currentRotation = initialRotation;
+
         isRotationAllowed = true;
         Debug.Log("보정이 끝나 비행기 회전이 재개됩니다.");
     }

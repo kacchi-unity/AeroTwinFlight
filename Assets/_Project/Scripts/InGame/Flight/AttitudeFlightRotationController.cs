@@ -37,12 +37,12 @@ public class AttitudeFlightRotationController : MonoBehaviour
     private void Start()
     {
         initialYaw = transform.eulerAngles.y;
-        RestCurrentYaw();
+        currentYaw = initialYaw;
     }
 
     void RestCurrentYaw()
     {
-        currentYaw = initialYaw;
+        currentYaw = transform.eulerAngles.y;
     }
 
     void ProcessAttitudeRotation(Quaternion absoluteRotation)

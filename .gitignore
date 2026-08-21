@@ -104,3 +104,6 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Mapbox Configuration (Secret Token Protection)
+Assets/Resources/Mapbox/MapboxConfiguration.txt
