@@ -316,7 +316,8 @@ Cesium Camera Manager 값을 조절함. 카메라의 FOV(시야각)와 이동 �
 
 - **시연 및 테스트**:  
 <p align="center">
-  <video src="  " width="100%" autoplay loop muted playsinline></video></p>  
+  <video src="https://github.com/user-attachments/assets/b155503f-6c9b-467e-be10-ada233497607" width="100%" autoplay loop muted playsinline></video></p>
+  
   > 각각 주요 도시의 위도(latitude), 경도 (longitude), 고도의 값
 
 - 테스트 구역: 일본, 미국 주요 도시 (대한민국은 보안과 공간정보 보안 규제로 인해 3D 맵 데이터가 제한되어, 해외 글로벌 대도를 중심으로 테스트를 진행함)
