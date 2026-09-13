@@ -11,7 +11,7 @@ public class FlightRotationController : MonoBehaviour
 
     [Header("Attutude 제어 모드 사용 여부")]
     [Tooltip("True: Attitude Control Mode / False: Absolute Mirror Mode")]
-    [SerializeField] private bool isAttutideRotationUse;
+    [SerializeField] private bool isAttitudeRotationUse;
 
     private Quaternion currentRotation = Quaternion.identity;
 
@@ -115,7 +115,7 @@ public class FlightRotationController : MonoBehaviour
         //정규화 및 적용
         currentRotation = Quaternion.Normalize(currentRotation);
 
-        if (isAttutideRotationUse)
+        if (isAttitudeRotationUse)
         {
             OnQuaternionCalculateFinish?.Invoke(currentRotation);
         }

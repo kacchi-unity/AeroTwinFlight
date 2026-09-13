@@ -31,7 +31,7 @@ void setup()
   Wire.write(0);    //on
   Wire.endTransmission();
   
-  Serial.println("Editor: MPU6050 is on...");
+  //Serial.println("Editor: MPU6050 is on...");
 
   pinMode(buttonPin, INPUT_PULLUP);
 }

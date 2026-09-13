@@ -190,6 +190,8 @@ public class SerialManager : MonoBehaviour
                     // int: 실제로 읽어온 바이트 수 리턴
                     int bytesCountToRead = stream.Read(readBuffer, 0, count);
 
+                    //Debug.Log("DATA: " + BitConverter.ToString(readBuffer, 0, bytesCountToRead)); //Debuging Test
+
                     lock (queueLock)
                     {
                         for (int i = 0; i < bytesCountToRead; i++)

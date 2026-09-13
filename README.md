@@ -87,6 +87,10 @@
 - 지상 주행 물리 엔진 적용 (Wheel Collider)
 - 키보드 지상 주행 테스트
 
+### 9/13
+- Taxiing 물리 지상 주행 구현
+- Finite State Machine 구축
+
 ## 기술적 도전 (Technical Challenges)
 ### 유니티 멀티 스레드 및 싱글 스레드 프레임 테스트
 - **문제 정의**: 동기식 데이터 대기 처리로 인한 유니티 메인 스레드 렌더링 프레임 드랍을 예상함.
@@ -347,6 +351,62 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 국내 지방 소도시(예: 제천 등)는 국내 지도 데이터 규제로 인해 3D 메쉬 미지원(2D 평면 사용) 현상이 존재하므로, 3D 메쉬를 지원하는 대도시(서울, 도쿄, 뉴욕 등) 중심으로 메인 비행 맵을 채택할 예정.  
 또한, 카메라의 지형 하단 침범 시 발생하는 땅 뚫림 현상을 방지하기 위해 Camera Raycast 충돌 예외 처리를 추가 예정.
 
+### Taxiing 지상 주행 구현
+- **도입 배경**: 런타임 내 공중 비행 뿐 아닌 이/착륙 시스템을 구현하고자 비행기 오브젝트의 지상 주행을 구현하고자 함.
+
+- **구현 방법**:  
+비행 오브젝트 모델에 3개의 바퀴를 확인함. 앞 바퀴 둘(Left, Right)과 뒷바퀴 하나에 Wheel Collider과 바퀴 콜라이더를 지탱해줄 몸체 Collider를 박스로 구현함. 
+단, 조향은 뒷 바퀴 하나에만 적용함.  
+![9.12.4](https://github.com/user-attachments/assets/71fe9e6a-4c1e-4eed-ba62-16dde87f4c80)  
+![9.12.3](https://github.com/user-attachments/assets/a87adb09-426a-4d66-8f0c-108cb57ef519)
+
+- FlightTaxiController.cs를 사용하여 최대 입력 바퀴 모터 토크 힘, 바퀴 조향 최대 허용 각도, 브레이크 토크 힘을 정의함.
+- ProcessTaxiing() 메서드를 통해 지상 차량처럼 지상 주행 물리 엔진을 제어함. FSM에서 FixedUpdate에 호출에 사용할 수 있도록 구현함. (TaxiingState - FSM 참고)
+- ResetPhysics() 메서드를 구현하여 현재 물리 법칙과 속력을 초기화하고 보정 명령 이벤트가 발생할 시 호출에 사용할 수 있도록함. (Calibrating State - FSM 참고)
+- 초기 테스트 구현 단계에선 FlightTaxiController.cs 스크립트 내에서 직접 호출함. FixedUpdate마다 실행하고 보정 이벤트도 직접 받게 하여 테스트를 진행함. 이후 FSM으로 호출 권한을 이전하여 호출 대상 메서드만 남은상태.
+
+- **조향 - Absolute 절대 회전 모드 사용**:
+- 초기, Attitude Control 제어 모드를 구현 하기 전, 공중 비행 모드에선 Absolute 모드 사용시 Yaw 방향 전환시 회전 방향을 누적하는 기능이 없어 기억을 하지 못하는 단점이 있어 AC모드를 도입함.
+이후 Taxiing 지상 주행 과정에선, Pitch와 Roll을 사용할 필요가 없어 조향을 위해 Yaw 회전이 필요했음. 이때, AC모드를 사용하면 센서 조종 제어에 어색하고 일관성없는 조향 방식임을 느낌. (Roll -> 조향)
+지상에선 Roll 제어를 막아야 자연스럽다고 판단하였으며, 지상에선 물리적으로 바퀴가 지면을 미는 힘으로 오브젝트의 방향 좌우 전환이 자연스럽게 누적되므로 AC가 아닌 Absolute 모드의 Yaw를 도입함.
+따라서 지상 주행에선 Absolute 모드를 사용하고 공중 주행에선 Absolute모드와 AC모드를 선택할 수 있는 구조를 구축하기로 기획함.  
+![9.12.1](https://github.com/user-attachments/assets/81f179c0-2dcd-462e-8d42-dc96e2d035ca)
+> 모터 토크 1000, 브레이크 토크 3000, 최대 조향 각도 55도 설정 시 주행
+
+> Absolute 모드에 사용되는 ABS 쿼터니안의 yaw값과 뒷 바퀴의 조향 각도와 1:1로 일치하도록 설정함.
+
+### Finite State Machine 구조 구현
+- **도입 배경**:  
+기존 구현 방식에서는 MPU6050 데이터를 갱신하고 저장한 값을 이용해 Flight Rotation Controller 스크립트 내에서 Absolute 쿼터니안을 만들고 바로 Rotation을 적용함.  
+만약, Attitude Control 모드를 사용하고자 한다면 Attitude Rotation Controller 스크립트에 계산된 AC 쿼터니안을 만들고 바로 Rotation에 적용하는 구조였음.  
+이때 AC Mode Allow 체크박스를 통해 if-else 문으로 두 비행 타입 모드를 선택할 수 있도록 제어함. 
+그러나 오브젝트의 이륙, 착륙을 구현 하려면 지상 주행 방식 또한 필요했고 이 방식과 공중 주행 방식의 전환을 원활히 제어하기 위해선 단순 if-else 사용으로는 구조의 복잡성과 추후 유지 보수, 구조 확장에 어려움이 생길 것이라 판단함.
+따라서 유한 상태 머신 FSM 구조를 활용하여 오브젝트의 상태의 진입 시작 명령, 동작 명령, 종료시 명령을 State 머신으로 제어하고 물리 제어 스크립트는 현재 오브젝트의 상태와 상관 없이 해당 물리 법칙만 수행하는 단일 기능 원칙을 지킬 수 있도록 도입함.
+
+- **구현 방법**:  
+1. MPU6050 센서의 자이로, 가속도 데이터 갱신 및 저장 과정 까지는 동일함.
+2. SensorQuaternionCalculator.cs 추가: Flight Rotation Controller 스크립트와 Attitude Rotation Controller 스크립트의 각각의 Abs, AC 쿼터니안 계산을 한 스크립트에서 실행하도록 통일하여 2개의 출력 쿼터니안 데이터를 생성하게 통합함.
+3. 비행기 오브젝트가 가질 수 있는 상태 클래스인 TaxiingState(지상 주행 상태), FlyingState(공중 주행 상태), CalibratingState(보정 상태) 클래스 구조 스크립트를 추가함. (IState 인터페이스 사용)
+4. StateMachine.cs 추가: 현재 상태와 직전 상태를 IState로 저장 기억하는 기능과 초기 실행 상태 명령 처리(Initialize), 상태 전환 명령 처리(Change) 메서드, Update와 FixedUpdate 처리를 구현한 상태 머신 클래스 구조 스크립트를 추가함.
+5. FlightStateController.cs 추가: 직접적인 비행기 오브젝트 상태 제어 스크립트. 각각의 상태와 State Machine의 인스턴스를 생성하고 초기 실행 State를 직접 결정함. MonoBehaviour를 기반으로 (Taxiing으로 설정) Update, FixedUpdate를 직접 호출함.
+6. 현재 구현된 상태는 다음과 같으며, 보정 상태는 FlightStateController.cs에서 호출함. TaxiingState와 FlyingState는 비행 상태에 따라 자동으로 변경시킬 예정.
+
+- TaxiingState(지상 주행 상태): Wheel Collider 활성화, 바퀴 모터 토크 적용, Abs 쿼터니안 참조 및 조향에 적용
+- FlyingState(공중 주행 상태): Wheel Collider 비활성화, 오브젝트에 전방 추력 엔진 등을 부여, Abs/AC 모드에 따른 쿼터니안 사용 및 Rotation에 적용
+- CalibratingState(보정 상태): 오브젝트에 적용된 물리 법칙을 정지, 초기화 (센서 초기화는 해당 클래스가 아닌 앞 과정에서 다룸)
+
+- **FSM 테스트**:  
+![9.12.2](https://github.com/user-attachments/assets/b5aa5699-f5ce-4474-9c72-5c5dec93d97a)
+
+- **핵심 성과 및 추후 계획**:  
+오브젝트의 상태의 진입 시작 명령, 동작 명령, 종료시 명령을 State 머신으로 제어하고 물리 제어 스크립트는 현재 오브젝트의 상태와 상관 없이 해당 물리 법칙만 수행하는 단일 기능 원칙을 지킬 수 있게됨.
+추후 Flying 상태 머신 물리 주행 구축 및 상태 변환 조건 설계 예정. (이륙 착륙 임계 속도 등)  
+
+![FSM](https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61)
+
+> TaxiingState와 CalibratingState의 전환
+
+> 테스트: 바퀴 토크 엔진 입력은 키보드 키 사용. 추후 입력 방식 변경 예정
 
 ## 트러블 슈팅
 ### 바이트 스트림 데이터 패킷과 Concurrent Queue 호환 문제
@@ -399,6 +459,8 @@ MPU6050 센서를 이용한 상보 필터 적용으로 Roll과 Pitch의 기울�
 차기 버전에서는 지자기 센서가 함께 있는 MPU9250나 BNO055 9축 IMU 센서를 도입해, 자기장 데이터를 기반으로 한 Yaw 축 보정을 보완할 계획임.
 
 - 8/18 개선 사항: Attitude Control Mode를 사용하여 yaw에 좌우 회전을 의존하지 않는 회전 제어를 구현함. Yaw Drift를 차단할 수 있음. 단, 절대적 미러 모드는 여전히 방지 불가함. (자세 제어 모드 구현 참고)
+
+### 비행기 뒷 바퀴
 
 ## 추가 예정 기능
 - MQTT 무선 연결
