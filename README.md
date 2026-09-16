@@ -412,7 +412,7 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 오브젝트의 상태의 진입 시작 명령, 동작 명령, 종료시 명령을 State 머신으로 제어하고 물리 제어 스크립트는 현재 오브젝트의 상태와 상관 없이 해당 물리 법칙만 수행하는 단일 기능 원칙을 지킬 수 있게됨.
 추후 Flying 상태 머신 물리 주행 구축 및 상태 변환 조건 설계 예정. (이륙 착륙 임계 속도 등)  
 
-![fsm]("https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61")
+![fsm](https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61)
 
 > TaxiingState와 CalibratingState의 전환
 
