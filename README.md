@@ -372,7 +372,7 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 따라서 지상 주행에선 Absolute 모드를 사용하고 공중 주행에선 Absolute모드와 AC모드를 선택할 수 있는 구조를 구축하기로 기획함.  
 
 <p align="center">
-  <video src="[https://github.com/user-attachments/assets/b5aa5699-f5ce-4474-9c72-5c5dec93d97a](https://github.com/user-attachments/assets/81f179c0-2dcd-462e-8d42-dc96e2d035ca)" width="100%" autoplay loop muted playsinline></video>
+  <video src="https://github.com/user-attachments/assets/81f179c0-2dcd-462e-8d42-dc96e2d035ca" width="100%" autoplay loop muted playsinline></video>
 </p>
 
 > 모터 토크 1000, 브레이크 토크 3000, 최대 조향 각도 55도 설정 시 주행
