@@ -370,7 +370,11 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 이후 Taxiing 지상 주행 과정에선, Pitch와 Roll을 사용할 필요가 없어 조향을 위해 Yaw 회전이 필요했음. 이때, AC모드를 사용하면 센서 조종 제어에 어색하고 일관성없는 조향 방식임을 느낌. (Roll -> 조향)
 지상에선 Roll 제어를 막아야 자연스럽다고 판단하였으며, 지상에선 물리적으로 바퀴가 지면을 미는 힘으로 오브젝트의 방향 좌우 전환이 자연스럽게 누적되므로 AC가 아닌 Absolute 모드의 Yaw를 도입함.
 따라서 지상 주행에선 Absolute 모드를 사용하고 공중 주행에선 Absolute모드와 AC모드를 선택할 수 있는 구조를 구축하기로 기획함.  
-![9.12.1](https://github.com/user-attachments/assets/81f179c0-2dcd-462e-8d42-dc96e2d035ca)
+
+<p align="center">
+  <video src="[https://github.com/user-attachments/assets/b5aa5699-f5ce-4474-9c72-5c5dec93d97a](https://github.com/user-attachments/assets/81f179c0-2dcd-462e-8d42-dc96e2d035ca)" width="100%" autoplay loop muted playsinline></video>
+</p>
+
 > 모터 토크 1000, 브레이크 토크 3000, 최대 조향 각도 55도 설정 시 주행
 
 > Absolute 모드에 사용되는 ABS 쿼터니안의 yaw값과 뒷 바퀴의 조향 각도와 1:1로 일치하도록 설정함.
@@ -408,9 +412,7 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 오브젝트의 상태의 진입 시작 명령, 동작 명령, 종료시 명령을 State 머신으로 제어하고 물리 제어 스크립트는 현재 오브젝트의 상태와 상관 없이 해당 물리 법칙만 수행하는 단일 기능 원칙을 지킬 수 있게됨.
 추후 Flying 상태 머신 물리 주행 구축 및 상태 변환 조건 설계 예정. (이륙 착륙 임계 속도 등)  
 
-<p align="center">
-  <video src="https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61" width="100%" autoplay loop muted playsinline></video>
-</p>
+![fsm]("https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61")
 
 > TaxiingState와 CalibratingState의 전환
 
