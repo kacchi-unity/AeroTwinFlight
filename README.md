@@ -375,6 +375,10 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 
 > Absolute 모드에 사용되는 ABS 쿼터니안의 yaw값과 뒷 바퀴의 조향 각도와 1:1로 일치하도록 설정함.
 
+- 9/16 수정 내용:  
+실제 비행체의 지상 주행 방식에 맞춰 바퀴 모터 토크를 사용하지 않고, 대신 엔진 추력(Trust Force, Forward 방향)을 사용하여 전진하는 형식으로 변경함.  
+엔진의 추력을 이용하여 바퀴에 힘을 가하는 "Free-Rolling" 바퀴 주행 방식으로 변경함. 
+
 ### Finite State Machine 구조 구현
 - **도입 배경**:  
 기존 구현 방식에서는 MPU6050 데이터를 갱신하고 저장한 값을 이용해 Flight Rotation Controller 스크립트 내에서 Absolute 쿼터니안을 만들고 바로 Rotation을 적용함.  
@@ -395,14 +399,18 @@ Latitude: 34.7053, Longitude: 135.4900, Height: 180
 - FlyingState(공중 주행 상태): Wheel Collider 비활성화, 오브젝트에 전방 추력 엔진 등을 부여, Abs/AC 모드에 따른 쿼터니안 사용 및 Rotation에 적용
 - CalibratingState(보정 상태): 오브젝트에 적용된 물리 법칙을 정지, 초기화 (센서 초기화는 해당 클래스가 아닌 앞 과정에서 다룸)
 
-- **FSM 테스트**:  
-![9.12.2](https://github.com/user-attachments/assets/b5aa5699-f5ce-4474-9c72-5c5dec93d97a)
+- **FSM 테스트**: 
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/b5aa5699-f5ce-4474-9c72-5c5dec93d97a" width="100%" autoplay loop muted playsinline></video>
+</p>
 
 - **핵심 성과 및 추후 계획**:  
 오브젝트의 상태의 진입 시작 명령, 동작 명령, 종료시 명령을 State 머신으로 제어하고 물리 제어 스크립트는 현재 오브젝트의 상태와 상관 없이 해당 물리 법칙만 수행하는 단일 기능 원칙을 지킬 수 있게됨.
 추후 Flying 상태 머신 물리 주행 구축 및 상태 변환 조건 설계 예정. (이륙 착륙 임계 속도 등)  
 
-![FSM](https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61)
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/8a048ba6-595e-4a70-bd2a-3ed42f481d61" width="100%" autoplay loop muted playsinline></video>
+</p>
 
 > TaxiingState와 CalibratingState의 전환
 
@@ -459,6 +467,34 @@ MPU6050 센서를 이용한 상보 필터 적용으로 Roll과 Pitch의 기울�
 차기 버전에서는 지자기 센서가 함께 있는 MPU9250나 BNO055 9축 IMU 센서를 도입해, 자기장 데이터를 기반으로 한 Yaw 축 보정을 보완할 계획임.
 
 - 8/18 개선 사항: Attitude Control Mode를 사용하여 yaw에 좌우 회전을 의존하지 않는 회전 제어를 구현함. Yaw Drift를 차단할 수 있음. 단, 절대적 미러 모드는 여전히 방지 불가함. (자세 제어 모드 구현 참고)
+
+### WheelCollider Free Rolling 상태에서 저속 AddForce가 무반응하는 문제
+- **기존**:  
+삼륜 지상 주행(WheelCollider 3개) 구조에서 바퀴에 토크를 전혀 주지 않고 완전한 Free Rolling 상태를 유지한 채 오브젝트 Rigidbody에 추력(AddForce)만 가해 지상 정지 상태에서 출발을 테스트함.
+
+- **문제점**:  
+공중에서는 추력(Thrust) 크기가 작던 크던 정상적으로 전방으로 가속되지만, Wheel Collider가 지면에 접촉해있는 상태에서는 추력을 작게 줄때 오브젝트가 제자리에서 전혀 움직이지 않았음.  
+반면 비행기 오브젝트를 지면으로부터 살짝 들어 올려 바퀴 접지가 끊기는 순간 즉시 추력이 정상 반영되어 지상 주행이 이어짐. 고속에서는 문제없으나 저속 추력이 주어질 때 움직이지 않는 문제점을 발견함.  
+지상 저속 주행은 이륙과 착륙에 꼭 사용되는 상황 중 하나이기에 문제를 해결하고자 원인을 파악함.
+
+- **원인 파악 과정**:  
+원인 파악을 위해 Forward/Sideways Friction Curve Stiffness 조절 (마찰력), Wheel Damping Rate (바퀴 회전 감쇠 능력), Suspension Distance (바퀴 스프링 범위), Physics Solver Iterations 상향 (초당 물리 연산 반복 횟수), 지면 바퀴 파임 확인 등 물리 연산 제어 실험을 진행하였으나 전부 무관함을 확인함.  
+또한 Rigidbody의 IsSleeping() 상태는 추력이 있을 때 항상 false였음에도 불구하고 움직이지 않아, 단순 Sleep 문제도 아닌 것 같았음.  
+이때, 첫 실행 시 오브젝트의 정지 상태에서 추력을 주지 않았을 때 Ridig Body의 Sleep 모드가 True임을 확인함. 결과적으로 인터넷 서칭을 통해, 이 현상은 Wheel Collider의 모터 토크가 0인 Free Rolling 조건일 때 진입하는 유니티 엔진 내 PhysX Vechicles SDK 내부의 별도 저속/정지 처리 방식으로 추측됨.  
+확실한 근본적인 원인은 단정할 수 없지만 유니티의 WheelCollider는 소스가 공개된 자체 구현이 아닌 NVIDIA PhysX의 Vehicles SDK를 내부적으로 감싸서 쓰는 비공개 라이브러리이므로 확인할 방법이 없었음.
+하지만 Forward/Sideways Stiffness=0 무효, Solver Iteration 무효, Sleep 무효, 속도 주입 무효, 바닥 접지 해제 시 즉시 해결 확인 등 다양한 시도를 해보았고 가설을 통해 PhysX Vehicle SDK가 오브젝트의 정지 상태를 특별 취급하여 인스펙터 값과 무관하게 내부 저속/정차 로직을 사용한 것으로 추측됨.  
+실제로 2015년 Unity 5부터 Unity Issue Tracker에 "WheelCollider가 일정 힘 이하에서는 반응하지 않는다"는 리포트가 있어, 정차 중인 오브젝트가 미끄러지지 않게 한 내부 설계가 원인일 수 도 있다고 추측함.
+
+- **해결**:  
+모터 토크를 0으로 주는 현실의 완전한 Free-Rolling 대신, 매 FixedUpdate 주기 마다 세 바퀴에 아주 미세한 모터토크 (0에 수렴하는 임계값)를 주입함.  
+그 결과, 지상 위 오브젝트의 Position 영향을 최소화 하면서 미세 토크로 정차/저속 처리 로직 발생을 방지할 수 있었음.
+실제로 매우 작은 추력을 줬을 때 미세하게 저속으로 오브젝트를 전방으로 전진시킬 수 있어 문제를 해결함.  
+적용 후 Ridigbody의 IsSleeping()이 True로 되지 않음을 확인함.
+
+(자료)
+> 1000N 같은 저속 추력에서도 정지 상태에서 출발이 정상적으로 이루어짐.  
+
+해당 방식은 정지 상태에서도 아주 미세하게 활동 상태를 유지하므로 별도의 미세한 밀림 방지 대책을 세울 예정임.
 
 ### 비행기 뒷 바퀴
 
