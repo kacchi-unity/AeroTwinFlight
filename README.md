@@ -505,18 +505,19 @@ WheelCollider 내부에서 실제로 어떻게 해당 상태를 처리하는지�
 또한 과거 2015년, Unity Issue Tracker에서 WheelCollider가 작은 힘에서는 회전하지 않는 유사한 현상이 보고된 사례를 확인함. 이를 참고하여 이번 문제 역시 Wheel Collider의 정지/저속 처리와 관련있을 가능성이 높다고 판단함.
 
 - **해결**:  
-완전한 Free Rolling을 위해 motorTorque = 0을 사용하던 기존 방식에서, 세 WheelCollider에 매우 작은 motorTorque를 적용하는 방식으로 변경함.  
+완전한 Free Rolling을 위해 motorTorque = 0을 사용하던 기존 방식에서, 세 WheelCollider에 매우 작은 motorTorque를 적용하는 방식으로 변경함.
+
 ![9.16.1](https://github.com/user-attachments/assets/59810017-8539-4d29-8656-57013acb0241)
 
 > motorTorque = 0  
 > Thrust = 1000N / Rigidbody Mass = 1,000kg (동일 조건)  
-> 정지 상태에서 추력을 적용했으나 전방 가속이 발생하지 않음.
+> 정지 상태에서 추력을 적용했으나 전방 가속이 발생하지 않음.  
 
 ![9.16.2](https://github.com/user-attachments/assets/10e50770-96d2-4e5c-9703-a003410b8870)
 
-> motorTorque = 10⁻⁴ Nm
-> Thrust = 1000N / Rigidbody Mass = 1,000kg (동일 조)  
-> 동일한 조건에서 정지 상태에서 정상적으로 전방 가속이 발생함.
+> motorTorque = 10⁻⁴ Nm  
+> Thrust = 1000N / Rigidbody Mass = 1,000kg (동일 조건)   
+> 동일한 조건에서 정지 상태에서 정상적으로 전방 가속이 발생함.  
 
 그 결과, Rigidbody의 추진력을 별도의 AddForce(추력)로 유지하면서도, 정지 상태에서 저속 추력을 줄때 정상적으로 전진 운동이 가능하게 구현함. 실제로 매우 작은 추력을 줬을 때 기존에 발생하던 정지 상태에서의 저속 출발 실패 현상이 재현되지 않음을 확인함.
 단, motorTorque = 10⁻⁴ Nm을 적용하면 정지 상태에서도 WheelCollider가 지속적으로 활성 상태를 유지할 가능성이 있으므로, 향후 정차 시 미세한 오브젝트 이동이 발생하는지 확인하고 필요할 경우 별도의 정차 제어를 추가할 예정임.
