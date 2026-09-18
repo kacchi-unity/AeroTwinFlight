@@ -470,39 +470,56 @@ MPU6050 센서를 이용한 상보 필터 적용으로 Roll과 Pitch의 기울�
 
 - 8/18 개선 사항: Attitude Control Mode를 사용하여 yaw에 좌우 회전을 의존하지 않는 회전 제어를 구현함. Yaw Drift를 차단할 수 있음. 단, 절대적 미러 모드는 여전히 방지 불가함. (자세 제어 모드 구현 참고)
 
-### WheelCollider Free Rolling 상태에서 저속 AddForce가 무반응하는 문제
+### WheelCollider Free Rolling 상태에서 저속 AddForce가 출발로 이어지지 않는 문제 (정지 상태)
 - **기존**:  
-삼륜 지상 주행(WheelCollider 3개) 구조에서 바퀴에 토크를 전혀 주지 않고 완전한 Free Rolling 상태를 유지한 채 오브젝트 Rigidbody에 추력(AddForce)만 가해 지상 정지 상태에서 출발을 테스트함.
+삼륜 지상 주행(WheelCollider 3개) 구조에서 바퀴에 구동 토크를 주지 않고 Free Rolling 상태를 유지한 채, 오브젝트의 Rigidbody에 추력(AddForce)을 직접 적용하여 지상 정지 상태에서 출발을 테스트함.
 
 - **문제점**:  
-공중에서는 추력(Thrust) 크기가 작던 크던 정상적으로 전방으로 가속되지만, Wheel Collider가 지면에 접촉해있는 상태에서는 추력을 작게 줄때 오브젝트가 제자리에서 전혀 움직이지 않았음.  
-반면 비행기 오브젝트를 지면으로부터 살짝 들어 올려 바퀴 접지가 끊기는 순간 즉시 추력이 정상 반영되어 지상 주행이 이어짐. 고속에서는 문제없으나 저속 추력이 주어질 때 움직이지 않는 문제점을 발견함.  
-지상 저속 주행은 이륙과 착륙에 꼭 사용되는 상황 중 하나이기에 문제를 해결하고자 원인을 파악함.
+공중에서는 추력(Thrust)의 크기에 따라 정상적으로 전방 가속이 가능했지만, Wheel Collider가 지면에 접촉한 상태에서는 일정 수준 이하의 추력에서 오브젝트가 정지 상태를 벗어나지 못하는 문제가 발생함.  
+반면 비행기 오브젝트를 지면으로부터 살짝 들어 올려 Wheel Collider 접지가 해제되면 동일한 추력에서도 즉시 전방 가속 및 지상 주행이 발생함. 이를 통해 해당 문제는 Rigid Body의 AddForce가 문제가 아닌 Wheel Collider의 지면 접촉 상태와 함께 발생함을 알아냄.
+지상 주행 및 이/착륙 과정에서 저속 출발이 필요했기에 해당 문제의 원인을 파악하고 해결하고자 함.
 
 - **원인 파악 과정**:  
-원인 파악을 위해 Forward/Sideways Friction Curve Stiffness 조절 (마찰력), Wheel Damping Rate (바퀴 회전 감쇠 능력), Suspension Distance (바퀴 스프링 범위), Physics Solver Iterations 상향 (초당 물리 연산 반복 횟수), 지면 바퀴 파임 확인 등 물리 연산 제어 실험을 진행하였으나 전부 무관함을 확인함.  
-또한 Rigidbody의 IsSleeping() 상태는 추력이 있을 때 항상 false였음에도 불구하고 움직이지 않아, 단순 Sleep 문제도 아닌 것 같았음.  
-이때, 첫 실행 시 오브젝트의 정지 상태에서 추력을 주지 않았을 때 Ridig Body의 Sleep 모드가 True임을 확인함. 결과적으로 인터넷 서칭을 통해, 이 현상은 Wheel Collider의 모터 토크가 0인 Free Rolling 조건일 때 진입하는 유니티 엔진 내 PhysX Vechicles SDK 내부의 별도 저속/정지 처리 방식으로 추측됨.  
-확실한 근본적인 원인은 단정할 수 없지만 유니티의 WheelCollider는 소스가 공개된 자체 구현이 아닌 NVIDIA PhysX의 Vehicles SDK를 내부적으로 감싸서 쓰는 비공개 라이브러리이므로 확인할 방법이 없었음.
-하지만 Forward/Sideways Stiffness=0 무효, Solver Iteration 무효, Sleep 무효, 속도 주입 무효, 바닥 접지 해제 시 즉시 해결 확인 등 다양한 시도를 해보았고 가설을 통해 PhysX Vehicle SDK가 오브젝트의 정지 상태를 특별 취급하여 인스펙터 값과 무관하게 내부 저속/정차 로직을 사용한 것으로 추측됨.  
-실제로 2015년 Unity 5부터 Unity Issue Tracker에 "WheelCollider가 일정 힘 이하에서는 반응하지 않는다"는 리포트가 있어, 정차 중인 오브젝트가 미끄러지지 않게 한 내부 설계가 원인일 수 도 있다고 추측함.
+원인 파악을 위해 다음 요소를 단계적으로 변경하여 해결 여부를 확인함.  
+- Forward / Sideways Friction Curve의 Stiffness 조절 (마찰력)
+- Wheel Damping Rate 조절 (바퀴 회전 감쇠 능력)
+- Suspension Distance 조절 (바퀴 스프링 조절 범위)
+- Physics Solver Iterations 조절 (초당 물리 연산 반복 횟수)
+- WheelCollider의 지면 접촉 및 위치 상태 확인  (지면 바퀴 파임 확인, 수직항력)
+위 물리 값들을 변경 한 이후에도 문제를 해결하지 못해 직접적인 원인은 아닌 것으로 판단함.
+
+
+또한 Rigidbody.IsSleeping()을 확인한 결과, 추력 1000N을 적용하고 확인 시 False값임을 확인함. 따라서 Ridigbody가 Sleep 상태에서 머물러 움직이지 않는 문제는 아닌 것을 확인함.  
+이후 동일한 현상에 대해 자료를 조사한 결과, Wheel Collider가 PhysX 기반 차량 물리 시스템을 사용한다는 점을 발견함. 특히 모터 토크가 0인 Free Rolling 상태에서만 정지 상태의 저속 출발 문제가 나타나고, 모터 토크를 0에 가까운 미세한 값을 적용하면 해당 문제가 사라지는 실험 결과를 바탕으로 Wheel Collider의 내부적인 정지/저속 처리와 관련된 현상임을 추정함.  
+WheelCollider 내부에서 실제로 어떻게 해당 상태를 처리하는지는 Unity Inspector나 사용자 코드 수준에서 확인할 수 없었기에 내부 구현의 정확한 원인은 단정할 수 없었음.
+
+하지만, 다음과 같은 실험을 통해 원인 범위를 좁힐 수 있었음.  
+- Forward / Sideways Friction Stiffness = 0 → 동일 현상
+- Suspension Spring / Damper = 0 → 동일 현상
+- Solver Iterations 변경 → 동일 현상
+- Rigidbody Sleep 상태 확인 → 추력 적용 시 IsSleeping() = false
+- WheelCollider 접지 해제 → 동일한 1000N 추력에서 즉시 정상 가속
+- 미세한 motorTorque 적용 → 정지 상태에서도 정상 출발
+
+위 실험 결과를 종합하여 WheelCollider의 Free Rolling 상태에서 발생하는 정지/저속 접촉 처리와 관련된 현상으로 추정함.  
+또한 과거 2015년, Unity Issue Tracker에서 WheelCollider가 작은 힘에서는 회전하지 않는 유사한 현상이 보고된 사례를 확인함. 이를 참고하여 이번 문제 역시 Wheel Collider의 정지/저속 처리와 관련있을 가능성이 높다고 판단함.
 
 - **해결**:  
-모터 토크를 0으로 주는 현실의 완전한 Free-Rolling 대신, 매 FixedUpdate 주기 마다 세 바퀴에 아주 미세한 모터토크 (0에 수렴하는 임계값)를 주입함.  
-그 결과, 지상 위 오브젝트의 Position 영향을 최소화 하면서 미세 토크로 정차/저속 처리 로직 발생을 방지할 수 있었음.
-실제로 매우 작은 추력을 줬을 때 미세하게 저속으로 오브젝트를 전방으로 전진시킬 수 있어 문제를 해결함.  
-적용 후 Ridigbody의 IsSleeping()이 True로 되지 않음을 확인함.
-
+완전한 Free Rolling을 위해 motorTorque = 0을 사용하던 기존 방식에서, 세 WheelCollider에 매우 작은 motorTorque를 적용하는 방식으로 변경함.  
 ![9.16.1](https://github.com/user-attachments/assets/59810017-8539-4d29-8656-57013acb0241)
 
-> 미세 토크를 주지 않았을 때 (추력 = 1000N)
+> motorTorque = 0  
+> Thrust = 1000N / Rigidbody Mass = 1,000kg (동일 조건)  
+> 정지 상태에서 추력을 적용했으나 전방 가속이 발생하지 않음.
 
 ![9.16.2](https://github.com/user-attachments/assets/10e50770-96d2-4e5c-9703-a003410b8870)
 
-> 미세 토크를 10⁻⁴ Nm 만큼 주었을 때 (추력 = 1000N)  
-> 1000N 같은 저속 추력에서도 정지 상태에서 출발이 정상적으로 이루어짐. (단, 오브젝트 질량은 1,000kg)  
+> motorTorque = 10⁻⁴ Nm
+> Thrust = 1000N / Rigidbody Mass = 1,000kg (동일 조)  
+> 동일한 조건에서 정지 상태에서 정상적으로 전방 가속이 발생함.
 
-해당 방식은 정지 상태에서도 아주 미세하게 활동 상태를 유지하므로 별도의 미세한 밀림 방지 대책을 세울 예정임.
+그 결과, Rigidbody의 추진력을 별도의 AddForce(추력)로 유지하면서도, 정지 상태에서 저속 추력을 줄때 정상적으로 전진 운동이 가능하게 구현함. 실제로 매우 작은 추력을 줬을 때 기존에 발생하던 정지 상태에서의 저속 출발 실패 현상이 재현되지 않음을 확인함.
+단, motorTorque = 10⁻⁴ Nm을 적용하면 정지 상태에서도 WheelCollider가 지속적으로 활성 상태를 유지할 가능성이 있으므로, 향후 정차 시 미세한 오브젝트 이동이 발생하는지 확인하고 필요할 경우 별도의 정차 제어를 추가할 예정임.
 
 ### 비행기 뒷 바퀴
 
