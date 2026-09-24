@@ -5,11 +5,16 @@ public class Test_Lift : MonoBehaviour
 {
     public WheelCollider[] wheels;
     [SerializeField] private Rigidbody rb;
+    [SerializeField] private Transform tr;
     [SerializeField] private TextMeshProUGUI tmp;
-    [SerializeField] private float liftCoefficient = 11.8f;
     [Range(0,1)][SerializeField] private float slider = 0f;
     [SerializeField] private float maxEnginePower = 15000f;
-    [SerializeField] private float dragCoefficient = 5f;
+    [SerializeField] private float dragCoefficient = 18f;
+
+    [Header ("Lift Coeff")]
+    [SerializeField] private float rho = 1.225f;
+    [SerializeField] private float wingArea = 16f;
+    [SerializeField] private Test_Cl test_cl;
 
     float lift;
     float sqrSpeed;
@@ -43,7 +48,7 @@ public class Test_Lift : MonoBehaviour
             wc.motorTorque = 0.0001f;
         }
 
-        rb.linearDamping = slider == 0 ? 1 : 0;
+        rb.linearDamping = slider == 0 ? 1 : 0;  //brake
 
         velocity = rb.linearVelocity;
 
@@ -51,15 +56,16 @@ public class Test_Lift : MonoBehaviour
 
         speed = Mathf.Sqrt(sqrSpeed);
 
-
-        lift = liftCoefficient * sqrSpeed;
+        lift = 0.5f * rho * wingArea * test_cl.GetCL() * sqrSpeed;
 
         enginePower = this.slider * maxEnginePower;
 
-        rb.AddRelativeForce(Vector3.up * lift, ForceMode.Force);
         rb.AddRelativeForce(Vector3.forward * enginePower, ForceMode.Force);
-        
 
+        //Lift
+        rb.AddRelativeForce(Vector3.up * lift, ForceMode.Force);
+
+        //Drag
         if (sqrSpeed > 0.01f)
         {
             float drag = dragCoefficient * sqrSpeed;
