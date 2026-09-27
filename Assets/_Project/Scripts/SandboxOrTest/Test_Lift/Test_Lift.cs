@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class Test_Lift : MonoBehaviour
 {
-    public WheelCollider[] wheels;
-    [SerializeField] private Rigidbody rb;
+    public WheelCollider[] wheels;//
+    [SerializeField] private Rigidbody rb;//
     [SerializeField] private Transform tr;
     [SerializeField] private TextMeshProUGUI tmp;
-    [Range(0,1)][SerializeField] private float slider = 0f;
-    [SerializeField] private float maxEnginePower = 15000f;
+    [Range(0,1)][SerializeField] private float slider = 0f;//
+    [SerializeField] private float maxEnginePower = 15000f;//
     [SerializeField] private float dragCoefficient = 18f;
 
     [Header ("Lift Coeff")]
-    [SerializeField] private float rho = 1.225f;
-    [SerializeField] private float wingArea = 16f;
-    [SerializeField] private Test_Cl test_cl;
+    [SerializeField] private float rho = 1.225f;//
+    [SerializeField] private float wingArea = 16f;//
+    [SerializeField] private Test_Cl test_cl;//
 
-    float lift;
-    float sqrSpeed;
-    float speed;
-    Vector3 velocity;
-    float enginePower;
+    float lift;//
+    float sqrSpeed;//
+    float speed;//
+    Vector3 velocity;//
+    float enginePower;//
 
     void Update()
     {
@@ -36,8 +36,8 @@ public class Test_Lift : MonoBehaviour
 
     void Awake()
     {
-        lift = 0;
-        enginePower = 0;
+        lift = 0;//
+        enginePower = 0;//
 
     }
 
@@ -46,24 +46,24 @@ public class Test_Lift : MonoBehaviour
         foreach (var wc in wheels)
         {
             wc.motorTorque = 0.0001f;
-        }
+        }//
 
-        rb.linearDamping = slider == 0 ? 1 : 0;  //brake
+        rb.linearDamping = slider == 0 ? 1 : 0;  //brake //
 
-        velocity = rb.linearVelocity;
+        velocity = rb.linearVelocity;//
 
-        sqrSpeed = velocity.sqrMagnitude;
+        sqrSpeed = velocity.sqrMagnitude;//
 
-        speed = Mathf.Sqrt(sqrSpeed);
+        speed = Mathf.Sqrt(sqrSpeed);//
 
-        lift = 0.5f * rho * wingArea * test_cl.GetCL() * sqrSpeed;
+        lift = 0.5f * rho * wingArea * test_cl.GetCL() * sqrSpeed;//
 
-        enginePower = this.slider * maxEnginePower;
+        enginePower = this.slider * maxEnginePower;//
 
-        rb.AddRelativeForce(Vector3.forward * enginePower, ForceMode.Force);
+        rb.AddRelativeForce(Vector3.forward * enginePower, ForceMode.Force);//
 
         //Lift
-        rb.AddRelativeForce(Vector3.up * lift, ForceMode.Force);
+        rb.AddRelativeForce(Vector3.up * lift, ForceMode.Force);//
 
         //Drag
         if (sqrSpeed > 0.01f)
@@ -71,6 +71,6 @@ public class Test_Lift : MonoBehaviour
             float drag = dragCoefficient * sqrSpeed;
 
             rb.AddForce(velocity.normalized * drag * (-1), ForceMode.Force);
-        }
+        }//
     }
 }

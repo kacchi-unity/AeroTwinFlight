@@ -1,11 +1,9 @@
 using UnityEngine;
 
-public class FlightTaxiController : MonoBehaviour
+public class TaxiingController : MonoBehaviour
 {
     [Header("Target Rigidbody")]
     [SerializeField] private Rigidbody targetRigidbody;
-    [Header("Y축 무게중심 설정 고정값 (브레이크 후륜 이탈 방지)")]
-    [SerializeField] private float centerOfMassYOffset = -1f;
 
     [Header("바퀴 Collider와의 충돌 무시 Collider 대상 (예: 몸체)")]
     [SerializeField] private Collider[] ignoreTargetColliderList;
@@ -16,12 +14,10 @@ public class FlightTaxiController : MonoBehaviour
     [SerializeField] private WheelCollider BackWheel;
 
     [Header("Taxiing Settings")]
-    [Header("최대 바퀴 회전력 (Speed)")]
-    [Min(1f)] [SerializeField] private float maxMotorTorque = 1000f;
     [Header("최대 조향 각도 (Turn)")]
     [Min(1f)] [SerializeField] private float maxSteerAngle = 50f;
-    [Header("브레이크 정지 출력 힘")]
-    [Min(1f)] [SerializeField] private float brakeForce = 3000f;
+    [Header("물리 엔진 슬립 방지 잔류 토크")]
+    [Min(0.0001f)][SerializeField] private float sleepPreventionTorque = 0.0001f;
 
     //현재 바퀴가 실제로 꺾여 있는 각도
     private float currentSteerAngle = 0f;
@@ -61,11 +57,6 @@ public class FlightTaxiController : MonoBehaviour
                 }
             }
         }
-
-        //Ridig Body 내 무게 중심 조절 (브레이크 뒷 바퀴 쏠림 방지)
-        Vector3 centerOfMass = targetRigidbody.centerOfMass;
-        centerOfMass.y = this.centerOfMassYOffset;
-        targetRigidbody.centerOfMass = centerOfMass;
     }
 
     void UpdateRotation(Quaternion currentRotation)
@@ -86,9 +77,9 @@ public class FlightTaxiController : MonoBehaviour
             targetRigidbody.angularVelocity = Vector3.zero;
         }
 
-        if (LeftWheel != null) { LeftWheel.motorTorque = 0f; LeftWheel.brakeTorque = 0f; LeftWheel.steerAngle = 0f; }
-        if (RightWheel != null) { RightWheel.motorTorque = 0f; RightWheel.brakeTorque = 0f; RightWheel.steerAngle = 0f; }
-        if (BackWheel != null) { BackWheel.motorTorque = 0f; BackWheel.brakeTorque = 0f; BackWheel.steerAngle = 0f; }
+        if (LeftWheel != null) { LeftWheel.motorTorque = sleepPreventionTorque; LeftWheel.steerAngle = 0f; }
+        if (RightWheel != null) { RightWheel.motorTorque = sleepPreventionTorque; RightWheel.steerAngle = 0f; }
+        if (BackWheel != null) { BackWheel.motorTorque = sleepPreventionTorque; BackWheel.steerAngle = 0f; }
 
         currentSteerAngle = 0f;
 
@@ -103,11 +94,10 @@ public class FlightTaxiController : MonoBehaviour
 
     private void ProcessTaxiing()
     {
-        //동력
-        float motorTorque = Input.GetKey(KeyCode.W) ? maxMotorTorque : 0f;
-
-        LeftWheel.motorTorque = motorTorque;
-        RightWheel.motorTorque = motorTorque;
+        //Avoid Physics stop moving error
+        LeftWheel.motorTorque = sleepPreventionTorque;
+        RightWheel.motorTorque = sleepPreventionTorque;
+        BackWheel.motorTorque = sleepPreventionTorque;
 
         // 조향 (Steering) : Absolute Mode Yaw Rotation 사용
         // -180 ~ 180도 내 오일러 Yaw각도 자동 정규화 (0f로 부터 최단거리 각도)
@@ -118,12 +108,11 @@ public class FlightTaxiController : MonoBehaviour
 
         BackWheel.steerAngle = currentSteerAngle * (-1);
 
-        //브레이크 제어
-        float brake = Input.GetKey(KeyCode.S) ? brakeForce : 0f;
+        //동력
+        //Processing in engine script
 
-        LeftWheel.brakeTorque = brake;
-        RightWheel.brakeTorque = brake;
-        BackWheel.brakeTorque = brake;
+        //브레이크 제어
+        //Processing in engine script
 
     }
 }

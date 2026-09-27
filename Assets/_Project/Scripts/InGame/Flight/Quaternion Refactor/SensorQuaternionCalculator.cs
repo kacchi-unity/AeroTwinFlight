@@ -61,7 +61,7 @@ public class SensorQuaternionCalculator : MonoBehaviour
     /// <summary>
     /// 스크립트 내 저장된 MPU6050 센서 데이터와 상보 필터를 이용해 Absolute, Attitude Control Quaternion을 계산하고 저장
     /// </summary>
-    void Update()
+    void FixedUpdate()
     {
         if (!isCalculateAllowed || !hasSensorData)
         {
@@ -123,7 +123,7 @@ public class SensorQuaternionCalculator : MonoBehaviour
 
     private Quaternion CalculateAbsoluteQuaternion(MPU6050Data sensorData)
     {
-        float deltaTime = Time.deltaTime;
+        float deltaTime = Time.fixedDeltaTime;
 
         //축 매핑: Real MPU6050 Sensor -> Unity
         Vector3 gyroMapped = new Vector3(-sensorData.gyroX, -sensorData.gyroZ, -sensorData.gyroY);
@@ -187,7 +187,7 @@ public class SensorQuaternionCalculator : MonoBehaviour
         float targetRoll = -rollPower * maxVisibleTurnAngle; // 오른쪽 기울임 시 Z축 반대 방향 뱅킹
 
         // Roll이 기울어져 있는 동안만 진행 방향(Yaw) 누적
-        virtualCurrentYaw_AC += rollPower * yawTurnSpeed * Time.deltaTime;
+        virtualCurrentYaw_AC += rollPower * yawTurnSpeed * Time.fixedDeltaTime;
 
         // 짐벌락 방지용 쿼터니안 조합 (Quaternion.Euler 대신 AngleAxis 곱셈 활용)
         Quaternion yawRot = Quaternion.AngleAxis(virtualCurrentYaw_AC, Vector3.up);

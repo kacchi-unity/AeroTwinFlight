@@ -1,19 +1,27 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class TaxiingState : IState
 {
-    private FlightStateController controller;
-    private StateMachine stateMachine;
-    private FlightTaxiController flightTaxiController;
+    private FlightStateController flightStateController;
+    private TaxiingController taxiingController;
+    private Rigidbody targetRigidbody;
+    private float takeoffSpeed;
+
+    private string stateName = "Taxiing";
 
     public TaxiingState(
-        FlightStateController controller,
-        StateMachine stateMachine,
-        FlightTaxiController flightTaxiController)
+        FlightStateController flightStateController,
+        TaxiingController taxiingController,
+        Rigidbody targetRigidbody,
+        float takeoffSpeed
+        )
     {
-        this.controller = controller;
-        this.stateMachine = stateMachine;
-        this.flightTaxiController = flightTaxiController;
+        this.flightStateController = flightStateController;
+        this.taxiingController = taxiingController;
+        this.targetRigidbody = targetRigidbody;
+        this.takeoffSpeed = takeoffSpeed;
+        
     }
 
     public void Enter()
@@ -21,15 +29,34 @@ public class TaxiingState : IState
         Debug.Log("Taxiing State 진입");
     }
 
-    public void Update() { }
+    public void Update()
+    {
+
+    }
 
     public void FixedUpdate()
     {
-        flightTaxiController.UpdateTaxiing();
+        float currentSqrSpeed = targetRigidbody.linearVelocity.sqrMagnitude;
+
+        if (currentSqrSpeed >= Mathf.Pow(takeoffSpeed, 2f))
+        {
+            flightStateController.ChangeState(flightStateController.TakeoffState);
+        }
+
+        else
+        {
+            taxiingController.UpdateTaxiing();
+        }
+        
     }
 
     public void Exit()
     {
         Debug.Log("Taxiing State 종료");
+    }
+
+    public string GetStateName()
+    {
+        return stateName;
     }
 }

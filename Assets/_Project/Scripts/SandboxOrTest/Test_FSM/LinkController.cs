@@ -17,7 +17,7 @@ public class LinkController : MonoBehaviour
 
     void Start()
     {
-        StateMachine.Initialize(IdleState);
+       //StateMachine.Initialize(IdleState);
     }
 
     void Update()

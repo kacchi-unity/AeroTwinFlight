@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LinkIdleState : IState
+public class LinkIdleState //: IState
 {
     private LinkController link;
     private StateMachine stateMachine;
@@ -20,7 +20,7 @@ public class LinkIdleState : IState
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            stateMachine.ChangeState(link.AttackState);
+            //stateMachine.ChangeState(link.AttackState);
         }
     }
 
