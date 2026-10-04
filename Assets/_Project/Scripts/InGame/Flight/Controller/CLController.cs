@@ -9,7 +9,9 @@ public class CLController : MonoBehaviour, ICLProvider
     [Header("CL-AOA 그래프")]
     [SerializeField] AnimationCurve CLCurve;
 
-    private float cl;
+    private float cl = 0f;
+
+    private float aoa = 0f;
 
     void Awake()
     {
@@ -66,7 +68,7 @@ public class CLController : MonoBehaviour, ICLProvider
             ) * Mathf.Rad2Deg;
 
         //AOA: Pitch와 실제 Velocity의 각도 차이
-        float aoa = pitch - flightVelocityAngle;
+        this.aoa = pitch - flightVelocityAngle;
 
         this.cl = CLCurve.Evaluate(aoa + incidenceAngle);
 
@@ -75,5 +77,10 @@ public class CLController : MonoBehaviour, ICLProvider
     public float GetCL()
     {
         return this.cl;
+    }
+
+    public float GetAOA()
+    {
+        return (this.aoa + this.incidenceAngle);
     }
 }

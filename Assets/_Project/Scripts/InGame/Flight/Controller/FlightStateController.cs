@@ -6,20 +6,25 @@ public class FlightStateController : MonoBehaviour
     [Header ("컨트롤러 컴포넌트")]
     [SerializeField] private EngineController flightEngineController;
     [SerializeField] private TaxiingController taxiingController;
+    [SerializeField] private TakeoffController takeoffController;
     [SerializeField] private FlyingController flyingController;
+    [SerializeField] private BrakeController brakeController;
 
     [Header("상태 머신 필요 데이터")]
     [Tooltip("물리 Rigidbody")]
     [SerializeField] private Rigidbody flightRidigbody;
 
-    [Tooltip("바퀴 콜라이더 등록")]
-    [SerializeField] private WheelCollider[] wheelColliders;
+    [Tooltip("바닥 감지 콜라이더 등록")]
+    [SerializeField] private BoxCollider[]groundCheckColliders;
 
-    [Tooltip("비행 전 지상 주행 Taxiing 시 Takeoff 상태 전환 임계 속도 값")]
+    [Tooltip("비행 전 지상 주행 Taxiing 시 Takeoff 상태 전환 임계 속력 값")]
     [SerializeField] private float takeoffSpeed = 28.7f;
 
-    [Tooltip("Takeoff 시작 후 Flying 이륙 상태 전환에 필요한 고도 상승량")]
-    [SerializeField] private float takeoffHeightDelta = 0.5f;
+    [Tooltip("Landing 상태에서 Taxiing 상태 전환에 필요한 줄임 속력 값")]
+    [SerializeField] private float taxiingTransitionSpeed = 6f;
+
+    [Tooltip("Ground 레이어 태그 등록")]
+    [SerializeField] private LayerMask groundLayer;
 
     //State Machine
     private StateMachine stateMachine;
@@ -36,7 +41,13 @@ public class FlightStateController : MonoBehaviour
     private IState stateBeforeCalibration;
 
     //Event
-    public event Action<IState> StateChanged; 
+    public event Action<IState> StateChanged;
+    public event Action BothTriggerGrounded;
+    public event Action BothTriggerAirborne;
+
+    //Global Variables
+    private TriggerDetector frontGroundDetector;
+    private TriggerDetector backGroundDetector;
 
 
     private void OnEnable()
@@ -65,28 +76,32 @@ public class FlightStateController : MonoBehaviour
             );
 
         CalibratingState = new CalibratingState(
-            this,
             flightEngineController,
             taxiingController
             );
 
         TakeoffState = new TakeoffState(
             this,
-            flyingController,
+            taxiingController,
+            takeoffController,
             flightRidigbody,
-            takeoffSpeed,
-            takeoffHeightDelta
+            takeoffSpeed
             );
 
         FlyingState = new FlyingState(
             this, 
             flyingController,
-            wheelColliders
+            brakeController
             );
 
         LandingState = new LandingState(
-            this
+            this,
+            taxiingController,
+            flightRidigbody,
+            taxiingTransitionSpeed
             );
+
+        SetupTriggerDetector();
     }
 
     void Start()
@@ -131,6 +146,72 @@ public class FlightStateController : MonoBehaviour
     {
         stateMachine.ChangeState(nextState);
         StateChanged?.Invoke(nextState);
-        
+    }
+
+    //Ground Trigger Collider Evnet Processing
+    private void SetupTriggerDetector()
+    {
+        if (groundCheckColliders == null || groundCheckColliders.Length < 2)
+        {
+            Debug.LogError($"{this.name}: groundCheckColliders가 2개 이상 등록되지 않았습니다!");
+            return;
+        }
+
+        frontGroundDetector = SetupDetector(groundCheckColliders[0]);
+        backGroundDetector = SetupDetector(groundCheckColliders[1]);
+
+        if (frontGroundDetector != null && backGroundDetector != null)
+        {
+            frontGroundDetector.TouchStateChanged += CheckAllGroundTrigger;
+            backGroundDetector.TouchStateChanged += CheckAllGroundTrigger;
+        }
+    }
+
+    private TriggerDetector SetupDetector(BoxCollider box)
+    {
+        box.isTrigger = true;
+
+        var detector = box.GetComponent<TriggerDetector>();
+
+        if (detector == null)
+        {
+            detector = box.gameObject.AddComponent<TriggerDetector>();
+        }
+
+        detector.Initialize(this.groundLayer);
+
+        return detector;
+    }
+
+    private void CheckAllGroundTrigger(bool isTouching)
+    {
+        if (frontGroundDetector!= null && backGroundDetector != null)
+        {
+            if (frontGroundDetector.IsTouchingTarget && backGroundDetector.IsTouchingTarget)
+            {
+                this.BothTriggerGrounded?.Invoke();
+            }
+
+            else if (!frontGroundDetector.IsTouchingTarget && !backGroundDetector.IsTouchingTarget)
+            {
+                this.BothTriggerAirborne?.Invoke();
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        frontGroundDetector.TouchStateChanged -= CheckAllGroundTrigger;
+        backGroundDetector.TouchStateChanged -= CheckAllGroundTrigger;
+    }
+
+    public float GetTakeoffSpeed()
+    {
+        return this.takeoffSpeed;
+    }
+
+    public float GetTaxiingTransitionSpeed()
+    {
+        return this.taxiingTransitionSpeed;
     }
 }

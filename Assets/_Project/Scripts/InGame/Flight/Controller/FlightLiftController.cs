@@ -11,7 +11,6 @@ public class FlightLiftController : MonoBehaviour
 
     private float lift;
     private float sqrSpeed;
-    private float speed;
     private Vector3 velocity;
 
     private ICLProvider clProvider;
@@ -36,11 +35,14 @@ public class FlightLiftController : MonoBehaviour
 
         sqrSpeed = velocity.sqrMagnitude;
 
-        speed = Mathf.Sqrt(sqrSpeed);
-
         //Lift
         lift = 0.5f * rho * wingArea * clProvider.GetCL() * sqrSpeed;
 
         flightRigidbody.AddRelativeForce(Vector3.up * lift, ForceMode.Force);
+    }
+
+    public float GetLift()
+    {
+        return this.lift;
     }
 }

@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using static UnityEngine.CullingGroup;
 
 public class FlightStateTextUI : MonoBehaviour
 {

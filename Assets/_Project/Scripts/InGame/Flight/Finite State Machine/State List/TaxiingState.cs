@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class TaxiingState : IState
@@ -7,8 +6,6 @@ public class TaxiingState : IState
     private TaxiingController taxiingController;
     private Rigidbody targetRigidbody;
     private float takeoffSpeed;
-
-    private string stateName = "Taxiing";
 
     public TaxiingState(
         FlightStateController flightStateController,
@@ -53,10 +50,11 @@ public class TaxiingState : IState
     public void Exit()
     {
         Debug.Log("Taxiing State 종료");
+
     }
 
     public string GetStateName()
     {
-        return stateName;
+        return GetType().Name;
     }
 }

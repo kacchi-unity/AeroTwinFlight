@@ -1,6 +1,6 @@
 using UnityEngine;
 
-enum FlightMode
+enum FlyingFlightMode
 {
     Absolute,
     Attitude_Control
@@ -9,10 +9,28 @@ enum FlightMode
 public class FlyingController : MonoBehaviour
 {
     [SerializeField] private Rigidbody targetRigidbody;
-    [SerializeField] private FlightMode flightMode;
+    [SerializeField] private FlyingFlightMode flightMode;
 
     private Quaternion absoluteQuaternion = Quaternion.identity;
     private Quaternion attitudeControlQuaternion = Quaternion.identity;
+
+    //진입 순간 회전값 저장
+    private Quaternion entryAircraftRotation;
+    private Quaternion entryAbsoluteSensorRotation;
+    private Quaternion entryAttitudeSensorRotation;
+
+    private bool hasRotationReference = false;
+
+    public void InitializeRotationReferecne()
+    {
+        entryAircraftRotation = targetRigidbody.rotation;
+
+        entryAbsoluteSensorRotation = absoluteQuaternion;
+
+        entryAttitudeSensorRotation = attitudeControlQuaternion;
+
+        hasRotationReference = true;
+    }
 
     private void OnEnable()
     {
@@ -37,7 +55,6 @@ public class FlyingController : MonoBehaviour
         this.attitudeControlQuaternion = quaternionData;
     }
 
-
     //Use Data
     public void UpdateRotation()
     {
@@ -46,22 +63,35 @@ public class FlyingController : MonoBehaviour
 
     private void ProcessRotation()
     {
-        Quaternion selectedQuaternion = Quaternion.identity;
+        if (!hasRotationReference)
+        {
+            return;
+        }
+
+        Quaternion sensorRotation = Quaternion.identity;
+        Quaternion entrySensorRotation = Quaternion.identity;
 
         switch (flightMode)
         {
-            case FlightMode.Absolute:
-                selectedQuaternion = this.absoluteQuaternion;
+            case FlyingFlightMode.Absolute:
+                sensorRotation = this.absoluteQuaternion;
+                entrySensorRotation = entryAbsoluteSensorRotation;
                 break;
 
-            case FlightMode.Attitude_Control:
-                selectedQuaternion = this.attitudeControlQuaternion;
+            case FlyingFlightMode.Attitude_Control:
+                sensorRotation = this.attitudeControlQuaternion;
+                entrySensorRotation = entryAttitudeSensorRotation;
                 break;
 
             default:
                 break;
         }
 
-        targetRigidbody.MoveRotation(selectedQuaternion);
+        //State 진입 이후 센서가 변화한 상대적 회전량 (ex. inverse(20)*35 = 15)
+        Quaternion relativeRotation = Quaternion.Inverse(entrySensorRotation) * sensorRotation;
+
+        Quaternion finalRotation = entryAircraftRotation * relativeRotation;
+
+        targetRigidbody.MoveRotation(finalRotation);
     }
 }

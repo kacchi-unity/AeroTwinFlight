@@ -1,13 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EngineController : MonoBehaviour
 {
     [SerializeField] private Rigidbody flightRigidbody;
     [SerializeField] private float maxEnginePower = 15013.5f;
-    [Range(0, 1)][SerializeField] private float slider = 0f;
+    [SerializeField] private BrakeController brakeController;
+
+    //test
+    [SerializeField] private Slider engineSlider;
 
     private float lastSlider;//추후 삭제 후 슬라이더 센서값 도입
+
     private bool onAllowedInputEngine = true;
 
     float currentEnginePower = 0f;
@@ -26,35 +31,29 @@ public class EngineController : MonoBehaviour
     {
         if (flightRigidbody != null)
         {
-            lastSlider = slider;
+            lastSlider = engineSlider.value;
             onAllowedInputEngine = false;
         }
     }
 
     private void RevertSlider()
     {
-        slider = lastSlider;
+        engineSlider.value = lastSlider;
         onAllowedInputEngine = true;
     }
 
     private void FixedUpdate()
     {
-        float engineRatio;
-
-        if (onAllowedInputEngine)
-        {
-            engineRatio = this.slider;
-        }
-
-        else
-        {
-            engineRatio = 0f;
-        }
-
-        flightRigidbody.linearDamping = (engineRatio == 0) ? 1 : 0;
+        float engineRatio = (onAllowedInputEngine) ? this.engineSlider.value : 0f;
 
         currentEnginePower = engineRatio * maxEnginePower;
 
         flightRigidbody.AddRelativeForce(Vector3.forward * currentEnginePower, ForceMode.Force);
+    
+    }
+
+    public float GetCurrentEnginePower()
+    {
+        return currentEnginePower;
     }
 }

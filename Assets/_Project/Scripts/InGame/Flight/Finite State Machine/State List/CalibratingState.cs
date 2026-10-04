@@ -2,19 +2,14 @@ using UnityEngine;
 
 public class CalibratingState : IState
 {
-    private FlightStateController controller;
     private TaxiingController taxiingController;
     private EngineController engineController;
 
-    private string stateName = "Calibrating";
-
     public CalibratingState(
-        FlightStateController controller,
         EngineController flightEngineController,
         TaxiingController taxiingController
         )
     {
-        this.controller = controller;
         this.engineController = flightEngineController;
         this.taxiingController = taxiingController;
     }
@@ -38,6 +33,6 @@ public class CalibratingState : IState
 
     public string GetStateName()
     {
-        return stateName;
+        return GetType().Name;
     }
 }

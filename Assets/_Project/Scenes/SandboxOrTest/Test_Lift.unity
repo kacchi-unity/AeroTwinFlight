@@ -884,7 +884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &444745424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1157,7 +1157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &534717721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1728,7 +1728,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1605646324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,7 +2086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1974453307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2213,7 +2213,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 444745426}
+  m_Camera: {fileID: 961739752}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -3279,7 +3279,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 335903de42d0fca47995928430166fd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlightStateController
-  flightTaxiController: {fileID: 0}
+  flightEngineController: {fileID: 0}
+  taxiingController: {fileID: 0}
+  takeoffController: {fileID: 0}
+  flyingController: {fileID: 0}
+  brakeController: {fileID: 0}
+  flightRidigbody: {fileID: 0}
+  groundCheckColliders: []
+  takeoffSpeed: 28.7
+  taxiingTransitionSpeed: 6
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &8542637499440014562
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -87,7 +87,7 @@ public class Test_Cl : MonoBehaviour
 
         tmp.text =
             $"AOA = {aoa:F1}°\n" +
-            $"Pitch = {-pitch:F1}°\n" +
+            $"Pitch = {pitch:F1}°\n" +
             $"Cl = {cl:F1}";
     }
 

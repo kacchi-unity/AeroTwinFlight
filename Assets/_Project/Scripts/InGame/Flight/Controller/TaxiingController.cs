@@ -15,17 +15,18 @@ public class TaxiingController : MonoBehaviour
 
     [Header("Taxiing Settings")]
     [Header("최대 조향 각도 (Turn)")]
-    [Min(1f)] [SerializeField] private float maxSteerAngle = 50f;
+    [Min(1f)][SerializeField] private float maxSteerAngle = 50f;
+
     [Header("물리 엔진 슬립 방지 잔류 토크")]
     [Min(0.0001f)][SerializeField] private float sleepPreventionTorque = 0.0001f;
 
-    //현재 바퀴가 실제로 꺾여 있는 각도
+    // 현재 바퀴가 실제로 꺾여 있는 각도
     private float currentSteerAngle = 0f;
 
-    //ABS 모드 저장 Yaw
+    // ABS 모드 저장 Yaw
     private float currentAbsoluteYaw = 0f;
 
-    //Event 
+    // Event
     private void OnEnable()
     {
         SensorQuaternionCalculator.OnAbsoluteQuaternionCalculated += UpdateRotation;
@@ -44,7 +45,7 @@ public class TaxiingController : MonoBehaviour
             return;
         }
 
-        //바퀴와의 사전 충돌 무시 처리 (ex. 동체 Collider)
+        // 바퀴와의 사전 충돌 무시 처리
         WheelCollider[] wheels = { LeftWheel, RightWheel, BackWheel };
 
         if (ignoreTargetColliderList != null && ignoreTargetColliderList.Length > 0)
@@ -66,10 +67,13 @@ public class TaxiingController : MonoBehaviour
 
     public void StartCalibration()
     {
-        ResetPhysics();
+        ResetPhysicsForce();
+        ResetSteerAngle();
+
+        Debug.Log("Taxiing: 물리 상태와 조향 값이 초기화되었습니다.");
     }
 
-    private void ResetPhysics()
+    private void ResetPhysicsForce()
     {
         if (targetRigidbody != null)
         {
@@ -77,16 +81,32 @@ public class TaxiingController : MonoBehaviour
             targetRigidbody.angularVelocity = Vector3.zero;
         }
 
-        if (LeftWheel != null) { LeftWheel.motorTorque = sleepPreventionTorque; LeftWheel.steerAngle = 0f; }
-        if (RightWheel != null) { RightWheel.motorTorque = sleepPreventionTorque; RightWheel.steerAngle = 0f; }
-        if (BackWheel != null) { BackWheel.motorTorque = sleepPreventionTorque; BackWheel.steerAngle = 0f; }
+        if (LeftWheel != null)
+        {
+            LeftWheel.motorTorque = sleepPreventionTorque;
+            LeftWheel.steerAngle = 0f;
+        }
 
-        currentSteerAngle = 0f;
+        if (RightWheel != null)
+        {
+            RightWheel.motorTorque = sleepPreventionTorque;
+            RightWheel.steerAngle = 0f;
+        }
 
-        Debug.Log("Taxiing: 물리 상태와 조향 값이 처음 상태로 초기화되었습니다.");
+        if (BackWheel != null)
+        {
+            BackWheel.motorTorque = sleepPreventionTorque;
+            BackWheel.steerAngle = 0f;
+        }
     }
 
-    //Taxiing State Reference (public/private)
+    public void ResetSteerAngle()
+    {
+        currentSteerAngle = 0f;
+        BackWheel.steerAngle = 0f;
+    }
+
+    // Taxiing State Reference
     public void UpdateTaxiing()
     {
         ProcessTaxiing();
@@ -94,25 +114,31 @@ public class TaxiingController : MonoBehaviour
 
     private void ProcessTaxiing()
     {
-        //Avoid Physics stop moving error
+        // Avoid Physics stop moving error
         LeftWheel.motorTorque = sleepPreventionTorque;
         RightWheel.motorTorque = sleepPreventionTorque;
         BackWheel.motorTorque = sleepPreventionTorque;
 
         // 조향 (Steering) : Absolute Mode Yaw Rotation 사용
-        // -180 ~ 180도 내 오일러 Yaw각도 자동 정규화 (0f로 부터 최단거리 각도)
-        float normalizedYaw = Mathf.DeltaAngle(0f, currentAbsoluteYaw);
+        // -180 ~ 180도 내 오일러 Yaw각도 자동 정규화
+        float normalizedYaw = Mathf.DeltaAngle(
+            0f,
+            currentAbsoluteYaw
+        );
 
         // 최대 조향 각도 제한
-        currentSteerAngle = Mathf.Clamp(normalizedYaw, -maxSteerAngle, maxSteerAngle);
+        currentSteerAngle = Mathf.Clamp(
+            normalizedYaw,
+            -maxSteerAngle,
+            maxSteerAngle
+        );
 
         BackWheel.steerAngle = currentSteerAngle * (-1);
 
-        //동력
-        //Processing in engine script
+        // 동력
+        // Processing in engine script
 
-        //브레이크 제어
-        //Processing in engine script
-
+        // 브레이크 제어
+        // Processing in engine script
     }
 }

@@ -9,6 +9,7 @@ public class FlightDragController : MonoBehaviour
 
     private float sqrSpeed;
     private Vector3 velocity;
+    private float drag = 0f;
 
     void FixedUpdate()
     {
@@ -19,9 +20,14 @@ public class FlightDragController : MonoBehaviour
         //Drag
         if (sqrSpeed > 0.01f)
         {
-            float drag = dragCoefficient * sqrSpeed;
+            this.drag = dragCoefficient * sqrSpeed;
 
             flightRigidbody.AddForce(velocity.normalized * drag * (-1), ForceMode.Force);
         }
+    }
+
+    public float GetDrag()
+    {
+        return this.drag;
     }
 }

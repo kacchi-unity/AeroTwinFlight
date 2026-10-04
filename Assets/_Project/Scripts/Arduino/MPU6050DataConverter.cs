@@ -85,6 +85,7 @@ public class MPU6050DataConverter : MonoBehaviour
         if (calibrationTargetList.Count == 0)
         {
             Debug.LogWarning("보정 실패: 수집된 데이터를 찾을 수 없음. 연결을 확인하세요.");
+            OnCalibrateDone?.Invoke();
             return;
         }
 

@@ -148,7 +148,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlightStateController
   flightEngineController: {fileID: 2501003353412100574}
   taxiingController: {fileID: 5579603810409380269}
+  flyingController: {fileID: 0}
+  flightRidigbody: {fileID: 0}
+  wheelColliders: []
   takeoffSpeed: 28.7
+  takeoffHeightDelta: 0.5
 --- !u!114 &5579603810409380269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,6 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b664ac6134f94e4f8917b83838650dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingController
+  targetRigidbody: {fileID: 0}
   flightMode: 1
 --- !u!1 &783591563108718537
 GameObject:
@@ -273,6 +278,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &940814364782606339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2277495462579637783}
+  - component: {fileID: 495962942069539028}
+  m_Layer: 0
+  m_Name: LandingDetector_Front
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2277495462579637783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940814364782606339}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.45, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6297595456633662242}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &495962942069539028
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940814364782606339}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.25, y: 0.59368134, z: 1.7}
+  m_Center: {x: 0.00680542, y: -0.20315933, z: -0.0002329348}
 --- !u!1 &1053004654965483320
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,6 +362,8 @@ Transform:
   m_Children:
   - {fileID: 5710279289704547452}
   - {fileID: 6653460422080573753}
+  - {fileID: 2277495462579637783}
+  - {fileID: 5748324917405889824}
   m_Father: {fileID: 1340990538901309394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1157017072056887154
@@ -495,6 +555,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PropellerRotationController
   flightRigidBody: {fileID: 3528785451952548749}
   rotationSpeedMultiplier: -10
+--- !u!1 &1997852593570276065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5748324917405889824}
+  - component: {fileID: 2778690240205018199}
+  m_Layer: 0
+  m_Name: LandingDetector_Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5748324917405889824
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997852593570276065}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.45, z: -8.15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6297595456633662242}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2778690240205018199
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997852593570276065}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.68, y: 0.59368134, z: 0.89}
+  m_Center: {x: 0.00680542, y: -0.20315933, z: -0.0002329348}
 --- !u!1 &2178719742713697871
 GameObject:
   m_ObjectHideFlags: 0

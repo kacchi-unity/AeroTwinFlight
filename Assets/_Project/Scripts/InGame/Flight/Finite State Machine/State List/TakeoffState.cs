@@ -3,34 +3,32 @@ using UnityEngine;
 public class TakeoffState : IState
 {
     private FlightStateController flightStateController;
-    private FlyingController flyingController;
+    private TaxiingController taxiingController;
+    private TakeoffController takeoffController;
     private Rigidbody targetRigidbody;
     private float takeoffSpeed;
-    private float takeoffHeightDelta;
 
-    private float takeoffStartHeight;
-
-    private string stateName = "Take off";
 
     public TakeoffState(
         FlightStateController controller,
-        FlyingController flyingController,
+        TaxiingController taxiingController,
+        TakeoffController takeoffController,
         Rigidbody targetRigidbody,
-        float takeoffSpeed,
-        float takeoffHeightDelta
+        float takeoffSpeed
         )
     {
         this.flightStateController = controller;
-        this.flyingController = flyingController;
+        this.taxiingController = taxiingController;
+        this.takeoffController = takeoffController;
         this.targetRigidbody = targetRigidbody;
         this.takeoffSpeed = takeoffSpeed;
-        this.takeoffHeightDelta = takeoffHeightDelta;
     }
 
     public void Enter()
     {
-        takeoffStartHeight = targetRigidbody.position.y;
         Debug.Log("Takeoff State 진입");
+
+        flightStateController.BothTriggerAirborne += OnBothTriggerAirborne;
     }
 
     public void Update()
@@ -49,21 +47,24 @@ public class TakeoffState : IState
             flightStateController.ChangeState(flightStateController.TaxiingState);
         }
 
-        if (targetRigidbody.position.y > takeoffStartHeight + takeoffHeightDelta)
-        {
-            flightStateController.ChangeState(flightStateController.FlyingState);
-        }
-        flyingController.UpdateRotation();
+        takeoffController.UpdateRotation();
 
     }
 
     public void Exit()
     {
         Debug.Log("Takeoff State 종료");
+
+        flightStateController.BothTriggerAirborne -= OnBothTriggerAirborne;
     }
 
     public string GetStateName()
     {
-        return stateName;
+        return GetType().Name;
+    }
+
+    private void OnBothTriggerAirborne()
+    {
+        flightStateController.ChangeState(flightStateController.FlyingState);
     }
 }
