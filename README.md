@@ -473,7 +473,7 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 실제 물리에서 CL 계수는 AOA에 따라 값이 변한다. 따라서 유니티에 내장된 기능 AnimationCurve() 클래스를 사용하여 CL-AOA 그래프를 그래프 내 점을 지정하여 구현할 수 있었다. 
 그래프의 특성 같은 경우, AOA가 0도에서 증가할 수록 CL 계수도 함께 증가한다. 하지만 받음각이 임계각을 초과하면 공기의 상대풍을 제대로 받지 못해 CL이 오히려 떨어져 날개가 양력을 만들지 못하고 떨어지는 실속 (Stall) 상태에 도달할 수 있다.  
 
-![CL-AOA그래프]()
+![CL-AOA그래프](https://github.com/user-attachments/assets/b22a4752-bda3-429d-8431-e4bb5bf935dc)
 
 이를 고려하여 다음과 같은 CL-AOA 그래프를 만들었다. 이를 통해 센서 각도를 pitch 기준으로 최대 15도 까지 올리면 받음각이 커지고 CL 이 최대로 커져 고도가 상승하고, 내리면 받음각이 작아져 CL도 줄어들어 고도가 하강한다. CL은 양력을 조절하는 계수이기 때문이다.  
 단 센서각도가 15도를 초과하면 AOA가 20을 넘어 CL이 줄어들게 만들어 실제 항공기의 실속을 구현하였다. 본 프로젝트는 조종 편의성을 위해 Attitude Control 쿼터니안 비행 한정으로 Pitch 기울기 허용값을 최대 15도로 제한하여 실속은 나타나지 않는다. (최대 허용값 변경 가능)
@@ -487,9 +487,7 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 
 - **구현 및 비행 테스트**
 
-<p align="center">
-  <video src="10.3.1" autoplay loop muted playsinline></video>
-</p>  
+![10.3.1](https://github.com/user-attachments/assets/509d819c-f1c5-4804-b3ed-c169955e00c9)
 
 > 왼쪽: 받음각, 현재 오브젝트 Pitch 기울기 각도, 양력 계수  
 > 오른쪽: 고도(m), 속력(m/s), 추력 크기(N), 양력(N)
@@ -568,7 +566,9 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 아래는 각 State에 대한 설명이다.
 
 #### **Calibrating State (보정 상태)**  
-![보정]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/b22a4752-bda3-429d-8431-e4bb5bf935dc" width="100%" autoplay loop muted playsinline></video>
+</p>  
 
 > 센서 데이터를 보정 처리하면서 필요한 물리 엔진 초기화, 오브젝트 멈추기 등을 처리한다. (조향각이 0도로 초기화됨.)
 
@@ -580,7 +580,9 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 	* State에서 다루는 Flight Controller에 구현한 보정 완료 시 필요 메서드를 호출한다. (Engine Controller의 allowEngineInput 등)  
 
 #### **Taxiing State (지상 주행 상태)**  
-![지상주행]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/b46daba8-1695-4828-84b1-be9d712be6cd" width="100%" autoplay loop muted playsinline></video>
+</p>    
 
 > 엔진 추력과 센서 yaw 조절에 의한 뒷 바퀴 조향으로 Free-Rolling 지상 주행을 한다.  
 > 계산된 양력이 무게보다 훨씬 작고 기수를 위로 들게 하는 로테이션 컨트롤러를 적용하지 않아 공중에 뜨지 않는다.
@@ -595,7 +597,9 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 	* FixedUpdate: Rigidbody를 받아 linearVelocity를 구하고 매 FixedUpdate 마다 조건문으로 임계 속도 takeoffSpeed와 비교하여 값을 넘을 시 Takeoff State 전환을 호출한다.
 
 #### Takeoff State (이륙 가능 상태)**  
-![이륙]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/46b711bb-f79c-408a-b53f-0ad1c213d9c8" width="100%" autoplay loop muted playsinline></video>
+</p>     
 
 > 오브젝트 속력이 충분하여 원하는 시점에 센서 기수를 들면 양력계수의 조절과 추력의 위쪽 방향 적용을 받아 공중에 뜬다.  
 > 이전 상태가 지상 주행 상태이며, 속력이 임계 속력 이상일 때만 진입 가능하다.  
@@ -619,7 +623,9 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 > Layer Mask를 통해 Ground를 등록했다. Tag는 문자열(String) 비교 과정을 거치지만, LayerMask는 32비트 정수의 비트 연산을 사용하기 때문에 성능 면에서 유리하기 때문이다.
 
 #### Flying State (공중 비행 상태)**  
-![비행]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/057bbc1e-db69-4eb3-bb57-2b47df29c380" width="100%" autoplay loop muted playsinline></video>
+</p>     
 
 > 핵심 상태인 공중 비행 상태. 중력 적용 환경에서의 양력, 항력 등을 활용한 안정적인 비행 상태임. (중력 기반 물리 엔진 비행 참고)  
 > 유일하게 센서의 pitch, roll, yaw 회전을 제한 없이 모두 사용하여 고도 조절 및 선회 비행을 할 수 있다.  
@@ -647,7 +653,9 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 > Engine Controller처럼 State와 상관없이 항상 동작하는 컨트롤러이며 Taxiing, Takeoff, Landing에서 중요하게 사용될 수 있다. 반면 공중 비행 시 Brake 사용은 부자연스럽다고 판단해 Flying State 상태에서만 해당 기능을 bool 변수로 임시로 비활성화 시켰다. (기본적으로 활성화)
 
 #### Landing State (착륙 가능 상태)**  
-![착륙]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/137eb556-f651-4a78-9515-4163ca469f24" width="100%" autoplay loop muted playsinline></video>
+</p>    
 
 > 비행을 끝 마치고 지상으로 착륙하기 위해 진입하는 과정이다.  
 > 지상에 진입 후, 엔진 슬라이더를 통해 직접 오브젝트를 감속시켜 잔여 속력을 줄이는데 집중하는 상태이다.
@@ -664,9 +672,11 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 	* Flight State Controller내 구현한 BothTriggerAirborne 이벤트 구독을 해제한다.
 
 - **전체 비행 상태 연결 및 테스트**  
-![전체비행하나]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/ea6c01e8-226b-4c2f-827f-f7cff028696d" width="100%" autoplay loop muted playsinline></video>
+</p>    
 
-![State변환그림]()  
+![State변환그림](https://github.com/user-attachments/assets/31308e7d-dafd-4d7a-ba60-a73456ac3e62)  
 
 > FSM 머신을 통해 전체 비행 상태를 연결할 수 있었다.
 
