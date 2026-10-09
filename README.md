@@ -746,8 +746,8 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 ![ScrollView하나]()  
 
 - **5단계: 호출 로직 조정 및 안정화**
-	* Base Station 개념 추가: 런타임 실행 시, 항상 있던 체크모양 Cube 평면을 시작 위치로 선정했다. 그리고 사용자로 부터 받은 맵 리스트 생성 시 항상 마지막 리스트에 IsBaseStation가 유일하게 true인 WaypointData 구조체를 마지막에 넣어 GeoMapGenerator에 보내는 구조를 설계했다. 이를 통해 'Base Station (Cube Object 존재하는 곳) -> 맵 순회 (현재 최대 5개) -> 다시 Base Station -> 맵 순회' 방식으로 모든 좌표 맵을 순회하면 항상 Base Station의 Ground 평면 Cube로 자동으로 돌아오는 순회 구조를 설정했다. 기존에 구현한 Landing -> Taxiing을 사용할 수 있는 공간으로 활용할 수 있기 때문이다.
-	* 다음 좌표의 비동기 로딩과 Waypoint 리스트 설정 시점 제한: GeoMapGenerator의 맵 변경의 시점 꼬임 문제를 방지하기 위해 다음과 같은 제한을 두었다.
+	* **Base Station 개념 추가**: 런타임 실행 시, 항상 있던 체크모양 Cube 평면을 시작 위치로 선정했다. 그리고 사용자로 부터 받은 맵 리스트 생성 시 항상 마지막 리스트에 IsBaseStation가 유일하게 true인 WaypointData 구조체를 마지막에 넣어 GeoMapGenerator에 보내는 구조를 설계했다. 이를 통해 'Base Station (Cube Object 존재하는 곳) -> 맵 순회 (현재 최대 5개) -> 다시 Base Station -> 맵 순회' 방식으로 모든 좌표 맵을 순회하면 항상 Base Station의 Ground 평면 Cube로 자동으로 돌아오는 순회 구조를 설정했다. 기존에 구현한 Landing -> Taxiing을 사용할 수 있는 공간으로 활용할 수 있기 때문이다.
+	* **비동기 로딩 및 Waypoint 리스트 설정 시점 제한**: GeoMapGenerator의 맵 변경의 시점 꼬임 문제를 방지하기 위해 다음과 같은 제한을 두었다.
 		* 비동기 맵 로딩이 진행되는 fogEffectTime(10초) 동안 맵 로딩이 완료되기 전까지 사용자의 맵 호출 입력을 무시한다. (중복 호출 방지)
 		* 사용자가 좌표를 입력하지 않을 시, 리스트를 GeoMapGenerator에 송신하지 않도록 하여 맵 호출 입력을 무시하도록 한다. (Null Referenece 방지)
 		* FSM: Flying 상태일 때만 다음 좌표 맵의 비동기 호출이 가능하도록 설정했다. 실제 속력과 진행 방향을 반영하여 Cesium 지형 생성 기준 하늘에 배치하기 때문이다.
