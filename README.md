@@ -752,6 +752,9 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 		* 사용자가 좌표를 입력하지 않을 시, 리스트를 GeoMapGenerator에 송신하지 않도록 하여 맵 호출 입력을 무시하도록 한다. (Null Referenece 방지)
 		* FSM: Flying 상태일 때만 다음 좌표 맵의 비동기 호출이 가능하도록 설정했다. 실제 속력과 진행 방향을 반영하여 Cesium 지형 생성 기준 하늘에 배치하기 때문이다.
 		* Base Station일 때만 ScrollView의 결정 버튼을 입력할 수 있도록 버튼의 interactable 제어를 추가했다. 즉 현재 비행 위치가 Base Station이 아닐 경우에는 ScrollView의 Waypoint 재입력 및 수정이 가능하지만, 입력 결정은 반영할 수 없도록 제한을 두었다. (WaypointUI 내에서 관리)
+ 
+![BaseCube](https://github.com/user-attachments/assets/423eeceb-0600-4902-b331-7d783d0d8720)  
+> Base Station 대상 Ground Cube
 
 - **최종 도입 테스트**:  
 ![최종테스트]() 
