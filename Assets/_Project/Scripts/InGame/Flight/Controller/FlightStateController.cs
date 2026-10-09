@@ -9,6 +9,7 @@ public class FlightStateController : MonoBehaviour
     [SerializeField] private TakeoffController takeoffController;
     [SerializeField] private FlyingController flyingController;
     [SerializeField] private BrakeController brakeController;
+    [SerializeField] private GeoMapGenerator geoMapGenerator;
 
     [Header("상태 머신 필요 데이터")]
     [Tooltip("물리 Rigidbody")]
@@ -91,7 +92,8 @@ public class FlightStateController : MonoBehaviour
         FlyingState = new FlyingState(
             this, 
             flyingController,
-            brakeController
+            brakeController,
+            geoMapGenerator
             );
 
         LandingState = new LandingState(

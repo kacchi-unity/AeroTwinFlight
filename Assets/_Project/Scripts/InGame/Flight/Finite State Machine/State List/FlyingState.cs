@@ -5,16 +5,19 @@ public class FlyingState : IState
     private FlightStateController flightStateController;
     private FlyingController flyingController;
     private BrakeController brakeController;
+    private GeoMapGenerator geoMapGenerator;
 
     public FlyingState(
         FlightStateController controller,
         FlyingController flyingController,
-        BrakeController brakeController
+        BrakeController brakeController,
+        GeoMapGenerator geoMapGenerator
         )
     {
         this.flightStateController = controller;
         this.flyingController = flyingController;
         this.brakeController = brakeController;
+        this.geoMapGenerator = geoMapGenerator;
     }
 
     public void Enter()
@@ -26,6 +29,8 @@ public class FlyingState : IState
         flightStateController.BothTriggerGrounded += OnBothTriggerGrounded;
 
         brakeController.SetIsBrakeEnabled(false);
+
+        geoMapGenerator.SetIsWaypointChangeAllowed(true);
     }
 
 
@@ -46,6 +51,8 @@ public class FlyingState : IState
         flightStateController.BothTriggerGrounded -= OnBothTriggerGrounded;
 
         brakeController.SetIsBrakeEnabled(true);
+
+        geoMapGenerator.SetIsWaypointChangeAllowed(false);
     }
 
     public string GetStateName()
