@@ -713,7 +713,9 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 
 ![모식도](https://github.com/user-attachments/assets/547c6505-5b3c-4f23-b4ab-b0bec21444e2)  
 
-![큐브 테스트]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/9735a010-6128-40c6-be16-ce1a7e2ec08d" width="100%" autoplay loop muted playsinline></video>
+</p>  
 	* 해당 테스트 결과, GenerateNextMapRoutine 코루틴 호출 시 targetWorldPosition을 지정한 오프셋에 맞춰 계산하여 해당 월드 좌표에 테스트 큐프 지형을 위치 시키는 기능을 확인했다. 해당 테스트 기준 안개 이펙트 10초가 끝나면 전방에 250m, 아래 130m로 큐브 오브젝트가 배치되었다. 해당 오프셋과 메서드를 만든 이유는 비행기 오브젝트가 Rigidbody 기반 물리 엔진으로 비행이 이루어지기 때문에 Position을 직접 설정할 시 물리 엔진과의 충돌이 생기고 꼬여 부자연스러운 주행 연산이 발생할 수 있기 때문이었다. 따라서 비행기 오브젝트가 아닌 맵을 불러오는 Cesium 오브젝트를 비행기 오브젝트 위치 기준으로 앞으로, 아래로 두도록 설계했다. 그리고 해당 오프셋 방향을 설정한 이유는 맵 타일 변경 시 비동기 로딩을 그대로 사용하면 완료된 시점에 이미 이동을 원하는 위도, 경도, 고도 좌표를 이미 지나버리기 때문이다. 비행기 오브젝트는 추력 엔진으로 인해 런타임 내 계속 전방으로 움직이기 때문이다. 따라서 안개 이펙트가 끝날 시 전방 그리고 하단에 목표 지구 좌표가 존재하도록 설계했다.
 	* 10/9 기준 현재 맵 변경 호출을 스페이스바 입력으로 담당하고 있으나 추후 실제 버튼 핀과 데이터 패킷을 연동하여 버튼 제어 방식으로 변경 할 예정이다.
 
@@ -721,13 +723,17 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 	* 1단계에서 계산이 완료된 targetWorldPosition 유니티 월드 좌표에 Cesium 오브젝트를 배치하도록 했다. Cesium 오브젝트는 위도, 경도, 고도를 입력시 지구의 실제 해당 위치가 유니티에서 원점(0, 0, 0) 월드 좌표에 생성한다. 이후 targetWorldPosition 좌표로 Cesium 오브젝트를 직접 옮기면 수월하다고 생각했다. 하지만 Cesium의 Position과 Rotation, Scale 값을 건드릴 시 지구 실제 좌표를 불러오는 내부 연산 과정에서 충돌이 생겨 건드리지 않는 것이 권장되었다. 실제로 첫 Cesium 오브젝트 도입 시 Scale을 잘못 건드렸다가 Rotation이 기괴하게 틀어지는 현상을 발견했다. 그래서 Cesium에서 제공하는 내부 메서드를 이용해 ECEF (Earth-Centered, Earth-Fixed)라는 지구 중심 직교 좌표계를 변환하는 과정을 이용했다. 기존에 구한 targetWorldPosition 유니티 좌표와 호출을 원하는 위도, 경도, 고도 dobule 값을 ECEF로 변환하여 ECEF의 차이값 Delta를 구할 수 있었다. 이후 SetOriginEarthCenteredEarthFixed() 메서드의 인수로 활용하여 Cesium 오브젝트를 posotion으로 이동시킬 필요없이 Cesium 오브젝트의 컴포넌트인 ECEF 연산을 이용해 안전하게 원하는 유니티 좌표에 원하는 지구 좌표를 배치할 수 있는 구조를 만들 수 있었다.
 	* ECEF (Earth-Centered, Earth-Fixed): 지구 한가운데를 원점(0, 0, 0)으로 잡고, 미터[m] 단위의 x, y, z축으로 위치를 나타내는 3D 좌표계. 실제로 -3,700,000 ~ +3,700,000 정도의 매우 큰 ECEF X, Y, Z값을 볼 수 있었다.
 
-![안개x맵변경]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/1e555eb5-87ba-4ea7-89ab-5dc7850a3e38" width="100%" autoplay loop muted playsinline></video>
+</p>  
 
 - **3단계: Fog Effect 추가**
 	* 글로벌 Google Photoreal 3D Tiles 맵 데이터는 순간적으로 재배치(Relocation) 및 로딩을 할 때 무거운 연산이 수행되므로 메쉬 팝핑(Mesh Popping), 텍스처 뭉개짐(찰흙 현상) 같은 시각적 현상이 생길 수 밖에 없었다. 그래서 맵 로딩을 호출 할 경우 비행기 오브젝트의 물리 연동, 연산이 방지하기 위해 안개 현상을 도입해 자연스러운 시각적 개연성과 비동기식 맵 로딩을 사용하고자 했다.
   	* 처음에는 유니티에서 제공하는 Window -> Rendering을 사용하고자 했으나, Cesium은 외부 오브젝트로 인식하여 Fog Rendering 연산에 영항을 미치지 않아 비행기 오브젝트만 안개가 적용되는 현상을 발견했다. 그래서 유니티 내에서 fogMaterial을 따로 만들고 SetFloat이라는 안개 이펙트 세기값을 조절하는 방식을 이용했다. 코루틴을 이용해 GenerateNextMapRoutine 코루틴 내 FadeFogRoutine을 구현해 설정한 2초 (조정 가능)동안 안개 Fade in, out을 다루는 부분을 추가했다. 이를 통해 맵 로딩 시 텍스처를 가리고 Cesium 오브젝트에 충분한 맵 로딩 시간을 부여한 뒤 Fog fade out을 이용해 자연스로운 비동기식 로딩을 설계할 수 있었다.
  
-![안개적용맵변경]()  
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/8b300d53-e61c-44fe-b075-7cf920de8da2" width="100%" autoplay loop muted playsinline></video>
+</p>  
 
 - **4단계: UI 연동**
 	* 런타임 실행 시 UI 키보드 입력을 통해 GeoMapGerator를 직접 호출하여 위도, 경도, 고도를 전달하는 구조를 추가했다.
@@ -743,7 +749,7 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 	* WaypointListManager.cs 추가: 유니티 씬 내 Waypoint ScrollView 확인 버튼을 누를 시 WaypointCollector를 호출해 여러 WaypointData를 리스트로 저장한 뒤, 위 GeoMapGenerator에 전달하는 기능을 담당한다. 해당 스크립트를 통해 여러 곳의 지구 좌표를 위에서부터 입력한 순서대로 순회할 수 있게 되었다. (GeoMapGenerator 리스트 저장 및 순차 호출)
 	* WaypointUI.cs 추가: 유니티 씬 내 ScrollView를 열고 접는 토글 버튼 기능, 현재 위치의 이름과 좌표를 텍스트로 출력하는 기능 등을 처리한다.
 
-![ScrollView하나]()  
+![Waypoint_ScrollView](https://github.com/user-attachments/assets/c0e4be68-19e2-443e-9f5a-377b15c22724)  
 
 - **5단계: 호출 로직 조정 및 안정화**
 	* **Base Station 개념 추가**: 런타임 실행 시, 항상 있던 체크모양 Cube 평면을 시작 위치로 선정했다. 그리고 사용자로 부터 받은 맵 리스트 생성 시 항상 마지막 리스트에 IsBaseStation가 유일하게 true인 WaypointData 구조체를 마지막에 넣어 GeoMapGenerator에 보내는 구조를 설계했다. 이를 통해 'Base Station (Cube Object 존재하는 곳) -> 맵 순회 (현재 최대 5개) -> 다시 Base Station -> 맵 순회' 방식으로 모든 좌표 맵을 순회하면 항상 Base Station의 Ground 평면 Cube로 자동으로 돌아오는 순회 구조를 설정했다. 기존에 구현한 Landing -> Taxiing을 사용할 수 있는 공간으로 활용할 수 있기 때문이다.
@@ -757,8 +763,9 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 > Base Station 대상 Ground Cube
 
 - **최종 도입 테스트**:  
-![최종테스트]() 
-
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/28728b3d-0421-4ece-a247-3b1ca01c5390" width="100%" autoplay loop muted playsinline></video>
+</p>  
 	* 현재, Cesium 지형 오브젝트에는 Physic Polygon을 적용하지 않아 비행기 오브젝트와 충돌하지 않는다. 지형이 평탄하지 않은 곳도 많고, 마름모 격자로 맵이 갈라지는 문제도 발견해 주행에 불안정하기 때문이다. 추후 비행기 오브젝트 재배치 기능 또는 보정 기능을 수정 보완, 추가 도입 시 Cesium 오브젝트에서도 이륙, 착륙할 수 있도록 테스트 및 변경할 예정이다.
 
 ## 트러블 슈팅
