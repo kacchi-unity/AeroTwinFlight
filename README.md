@@ -766,7 +766,16 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 <p align="center">
   <video src="https://github.com/user-attachments/assets/28728b3d-0421-4ece-a247-3b1ca01c5390" width="100%" autoplay loop muted playsinline></video>
 </p>  
+
+> - Base Staition, FSM - Flying State 에서 일본의 "Marin World" 라는 위치와 "오사카 간사이 공항"에 대한 지구 실제 좌표를 입력해 순서대로 장소를 순회하는 테스트를 진행했다.  
+> - "결정" 버튼을 입력 시 GeoMapGenerator에 Waypoint - struct 데이터 리스트가 저장 및 반영된다.  
+> - Base Station을 벗어날 시 "결정" 버튼을 누를 수 없다.  
+> - 순회 완료 후, 남은 좌표 입력 정보가 없으면 자동으로 Base Station으로 돌아오며, "결정" 버튼 입력을 활성화시켜 좌표를 수정할 수 있는 권한이 주어진다.  
+> - 새로운 좌표인 "Mojiko" 라는 위치를 입력 후 "결정" 버튼을 입력해 새로운 데이터 리스트가 반영되었다. 이후 비동기 맵 로딩을 호출 시 반영된 데이터 좌표로 Cesium 오브젝트가 반영되었다.  
+
+- **추후 개선 사항**:
 	* 현재, Cesium 지형 오브젝트에는 Physic Polygon을 적용하지 않아 비행기 오브젝트와 충돌하지 않는다. 지형이 평탄하지 않은 곳도 많고, 마름모 격자로 맵이 갈라지는 문제도 발견해 주행에 불안정하기 때문이다. 추후 비행기 오브젝트 재배치 기능 또는 보정 기능을 수정 보완, 추가 도입 시 Cesium 오브젝트에서도 이륙, 착륙할 수 있도록 테스트 및 변경할 예정이다.
+ 	* Cesium의 Fog 렌더링이 적용되지 않는 문제를 해결하기 위해 안개 Material을 커스텀하여 전체 씬에 입히는 방식으로 구현했다. 해당 방식으로 인해 현지 비행기 오브젝트도 함께 안개 Material에 의해 보이지 않는 현상이 있다. 추후 비행기 오브젝트를 안개 Material에 적용하지 않도록 이를 보완할 것이다.
 
 ## 트러블 슈팅
 ### 바이트 스트림 데이터 패킷과 Concurrent Queue 호환 문제
