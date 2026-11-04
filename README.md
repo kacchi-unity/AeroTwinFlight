@@ -851,7 +851,7 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 			- 패킷 발행 전송: 연결된 MQTT 클라이언트에 publish 메서드를 통해 데이터 토픽과 함께 센서 데이터 패킷을 주기적으로 발행하는 기능을 추가함.
 			
      		![LED](https://github.com/user-attachments/assets/3868656c-d0c5-4aac-abbe-7663b5958378)
-    		> WiFi, MQTT 순서대로 연결 완료 시 파란 LED 점등하도록 추가. (붉은 LED는 전원)
+    		> WiFi, MQTT 순서대로 연결 완료 시 파란 LED 점등하도록 추가. (붉은 LED는 전원)  
         	> 토픽: flight/sensor, MQTT 포트번호 1883 이용. (로컬 서버 mosquitto 이용, mqtt_Broker.bat 추가)
 
 - **소프트웨어 변경 사항(Unity)**:  
