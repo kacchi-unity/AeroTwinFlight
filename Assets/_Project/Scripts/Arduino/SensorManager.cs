@@ -4,16 +4,19 @@ using UnityEngine;
 public class SensorManager : MonoBehaviour
 {
     public static event Action<MPU6050Data> OnMPUDataUpdated;
-    public static event Action OnButtonDown;
+    public static event Action<ArduinoSensorData> OnButtonUpdated;
+    public static event Action<float> OnSliderValueUpdated;
 
     private void OnEnable()
     {
         SerialManager.OnRawDataReceived += SplitAndDistributeRawData;
+        MQTTManager.OnRawDataReceived += SplitAndDistributeRawData;
     }
 
     private void OnDisable()
     {
         SerialManager.OnRawDataReceived -= SplitAndDistributeRawData;
+        MQTTManager.OnRawDataReceived -= SplitAndDistributeRawData;
     }
 
     void SplitAndDistributeRawData(ArduinoSensorData totalRawDatas)
@@ -21,9 +24,8 @@ public class SensorManager : MonoBehaviour
         MPU6050Data mpuDatas = new MPU6050Data(totalRawDatas);
         OnMPUDataUpdated?.Invoke(mpuDatas);
 
-        if (totalRawDatas.isButtonPressed)
-        {
-            OnButtonDown?.Invoke();
-        }
+        OnButtonUpdated?.Invoke(totalRawDatas);
+
+        OnSliderValueUpdated?.Invoke(totalRawDatas.SliderValue);
     }
 }

@@ -1,18 +1,13 @@
 // ====================================================================
-// * 아두이노 통신 프로토콜 규칙
-// 
-// index [0] : x축 각속도 (short, 16bit)
-// index [1] : y축 각속도 (short)
-// index [2] : z축 각속도 (short)
-
-// index [3] : x축 각속도 (short)
-// index [4] : y축 각속도 (short)
-// index [5] : z축 각속도 (short)
-
-// index [6] : 버튼 데이터 (bool)
+// * 패킷 구조 규칙
+// - index [0~2] : 가속도 (Accel X, Y, Z / short)
+// - index [3~5] : 각속도 (Gyro X, Y, Z / short)
+// - index [6~8] : 버튼 누름 횟수 데이터 (ClickCount / unsigned int_32)
+// - index [9] : 가변 저항 슬라이더 (SliderValue / float)
 // ====================================================================
 
 using UnityEngine;
+using System;
 
 public struct ArduinoSensorData
 {
@@ -20,30 +15,72 @@ public struct ArduinoSensorData
     private enum DataIndex
     {
         AccelX = 0,
-        AccelY = 1,
-        AccelZ = 2,
+        AccelY,
+        AccelZ,
 
-        GyroX = 3,
-        GyroY = 4,
-        GyroZ = 5,
+        GyroX,
+        GyroY,
+        GyroZ,
 
-        IsButtonPressed = 6,
+        CalibrationButton,
+        MapChangeButton,
+        CameraChangeButton,
+
+        SliderValue,
 
         TotalDataCount //Auto count
     }
 
-    //Data field
-    public short accelX;
-    public short accelY;
-    public short accelZ;
+    //Data fields
+    public short AccelX { get; private set; }
+    public short AccelY { get; private set; }
+    public short AccelZ { get; private set; }
 
-    public short gyroX;
-    public short gyroY;
-    public short gyroZ;
+    public short GyroX { get; private set; }
+    public short GyroY { get; private set; }
+    public short GyroZ { get; private set; }
 
-    public bool isButtonPressed;
+    public uint CalibrationButton { get; private set; }
+    public uint MapChangeButton { get; private set; }
+    public uint CameraChangeButton { get; private set; }
 
-    //Data method: int.TryParse로 검증된 rawDatas를 받아 구조체 데이테를 완성시키는 메서드
+    public float SliderValue { get; private set; }
+
+    /// <summary>
+    /// 패킷의 Byte 배열을 받아 구조체 형태로 변환하는 멤버 메서드
+    /// </summary>
+    public static ArduinoSensorData ParseData(byte[] packetDatas)
+    {
+        if (packetDatas == null)
+        {
+            Debug.LogError("[ArduinoSensorData] 파싱 실패: 패킷 데이터를 확인하세요.");
+
+            //return default struct
+            return default;
+        }
+
+        ArduinoSensorData data = new ArduinoSensorData();
+        int offset = 0;
+
+        data.AccelX = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short); // 2 (Byte 단위)
+        data.AccelY = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short);
+        data.AccelZ = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short);
+
+        data.GyroX = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short);
+        data.GyroY = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short);
+        data.GyroZ = BitConverter.ToInt16(packetDatas, offset); offset += sizeof(short);
+
+        data.CalibrationButton = BitConverter.ToUInt32(packetDatas, offset); offset += sizeof(uint);
+        data.MapChangeButton = BitConverter.ToUInt32(packetDatas, offset); offset += sizeof(uint);
+        data.CameraChangeButton = BitConverter.ToUInt32(packetDatas, offset); offset += sizeof(uint);
+
+        data.SliderValue = BitConverter.ToSingle(packetDatas, offset); offset += sizeof(float);
+        return data;
+    }
+
+    /// <summary>
+    /// int.TryParse로 검증된 rawDatas를 받아 구조체 데이터를 완성시키는 메서드
+    /// </summary>
     public static ArduinoSensorData ParseData(int[] rawDatas)
     {
         //Check rawDatas
@@ -58,24 +95,20 @@ public struct ArduinoSensorData
 
         ArduinoSensorData data = new ArduinoSensorData();
 
-        data.accelX = (short)rawDatas[(int)DataIndex.AccelX];
+        data.AccelX = (short)rawDatas[(int)DataIndex.AccelX];
+        data.AccelY = (short)rawDatas[(int)DataIndex.AccelY];
+        data.AccelZ = (short)rawDatas[(int)DataIndex.AccelZ];
 
-        data.accelY = (short)rawDatas[(int)DataIndex.AccelY];
+        data.GyroX = (short)rawDatas[(int)DataIndex.GyroX];
+        data.GyroY = (short)rawDatas[(int)DataIndex.GyroY];
+        data.GyroZ = (short)rawDatas[(int)DataIndex.GyroZ];
 
-        data.accelZ = (short)rawDatas[(int)DataIndex.AccelZ];
-
-        data.gyroX = (short)rawDatas[(int)DataIndex.GyroX];
-
-        data.gyroY = (short)rawDatas[(int)DataIndex.GyroY];
-
-        data.gyroZ = (short)rawDatas[(int)DataIndex.GyroZ];
-
-        data.isButtonPressed = ( rawDatas[(int)DataIndex.IsButtonPressed] == 1 );
+        data.CalibrationButton = (uint)rawDatas[(int)DataIndex.CalibrationButton];
 
         return data;
     }
 
-    public int GetTotalDataCount()
+    public static int GetTotalDataCount()
     {
         return (int)DataIndex.TotalDataCount;
     }

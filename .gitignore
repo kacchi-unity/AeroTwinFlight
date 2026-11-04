@@ -107,3 +107,6 @@ InitTestScene*.unity*
 
 # Mapbox Configuration (Secret Token Protection)
 Assets/Resources/Mapbox/MapboxConfiguration.txt
+
+# Google Map Tiles 3D API
+Assets/Resources/MapConfig.json

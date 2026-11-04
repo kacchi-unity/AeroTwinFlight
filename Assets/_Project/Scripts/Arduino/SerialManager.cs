@@ -36,8 +36,7 @@ public class SerialManager : MonoBehaviour
 
     void Start()
     {
-        ArduinoSensorData tempStruct = new ArduinoSensorData();
-        intBuffer = new int[tempStruct.GetTotalDataCount()];
+        intBuffer = new int[ArduinoSensorData.GetTotalDataCount()];
 
         try
         {

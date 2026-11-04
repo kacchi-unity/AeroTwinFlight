@@ -23,18 +23,18 @@ public class TaxiingController : MonoBehaviour
     // 현재 바퀴가 실제로 꺾여 있는 각도
     private float currentSteerAngle = 0f;
 
-    // ABS 모드 저장 Yaw
-    private float currentAbsoluteYaw = 0f;
+    // AC 모드 저장 Roll
+    private float currentACRoll = 0f;
 
     // Event
     private void OnEnable()
     {
-        SensorQuaternionCalculator.OnAbsoluteQuaternionCalculated += UpdateRotation;
+        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated += UpdateRotation;
     }
 
     private void OnDisable()
     {
-        SensorQuaternionCalculator.OnAbsoluteQuaternionCalculated -= UpdateRotation;
+        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated -= UpdateRotation;
     }
 
     private void Awake()
@@ -62,7 +62,7 @@ public class TaxiingController : MonoBehaviour
 
     void UpdateRotation(Quaternion currentRotation)
     {
-        currentAbsoluteYaw = currentRotation.eulerAngles.y;
+        currentACRoll = currentRotation.eulerAngles.z;
     }
 
     public void StartCalibration()
@@ -120,15 +120,15 @@ public class TaxiingController : MonoBehaviour
         BackWheel.motorTorque = sleepPreventionTorque;
 
         // 조향 (Steering) : Absolute Mode Yaw Rotation 사용
-        // -180 ~ 180도 내 오일러 Yaw각도 자동 정규화
-        float normalizedYaw = Mathf.DeltaAngle(
+        // -180 ~ 180도 내 오일러 Roll 각도 자동 정규화
+        float normalizedRoll = Mathf.DeltaAngle(
             0f,
-            currentAbsoluteYaw
+            currentACRoll * (-1f)
         );
 
         // 최대 조향 각도 제한
         currentSteerAngle = Mathf.Clamp(
-            normalizedYaw,
+            normalizedRoll,
             -maxSteerAngle,
             maxSteerAngle
         );

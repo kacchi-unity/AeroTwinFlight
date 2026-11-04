@@ -9,11 +9,11 @@ public struct MPU6050Data
 
     public MPU6050Data(ArduinoSensorData rawData)
     {
-        accelX = rawData.accelX;
-        accelY = rawData.accelY;
-        accelZ = rawData.accelZ;
-        gyroX = rawData.gyroX;
-        gyroY = rawData.gyroY;
-        gyroZ = rawData.gyroZ;
+        accelX = rawData.AccelX;
+        accelY = rawData.AccelY;
+        accelZ = rawData.AccelZ;
+        gyroX = rawData.GyroX;
+        gyroY = rawData.GyroY;
+        gyroZ = rawData.GyroZ;
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic; //List
 using CesiumForUnity; //Cesium API 사용
 using Unity.Mathematics;
 using System; //double3
-//using NUnit.Framework; //Cesium double3 type 연산 사용
 
 public class GeoMapGenerator : MonoBehaviour
 {
@@ -20,7 +19,7 @@ public class GeoMapGenerator : MonoBehaviour
     [SerializeField] private Transform flightTransform;
     [SerializeField] private Rigidbody flightRigidbody;
     [SerializeField] private WaypointListManager waypointListManager;
-
+    [SerializeField] private ArduinoButtonManager arduinoButtonManager;
 
     /*
         [Header("World Target Rotation (지구 좌표)")]
@@ -59,11 +58,13 @@ public class GeoMapGenerator : MonoBehaviour
     private void OnEnable()
     {
         waypointListManager.WaypointUpdated += UpdateWaypointDatas;
+        arduinoButtonManager.MapChangeButtonClicked += ChangeWaypoint;
     }
 
     private void OnDisable()
     {
         waypointListManager.WaypointUpdated -= UpdateWaypointDatas;
+        arduinoButtonManager.MapChangeButtonClicked -= ChangeWaypoint;
     }
 
     private void UpdateWaypointDatas(IReadOnlyList<WaypointData> waypointDatas)
@@ -78,10 +79,9 @@ public class GeoMapGenerator : MonoBehaviour
         this.baseStationObject.SetActive(true);
     }
 
-    private void Update()
+    private void ChangeWaypoint()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && 
-            isWaypointChangeAllowed &&
+        if (isWaypointChangeAllowed &&
             this.savedWaypointDatas != null &&
             this.savedWaypointDatas.Count >= 2 && 
             !isGeneratingMap

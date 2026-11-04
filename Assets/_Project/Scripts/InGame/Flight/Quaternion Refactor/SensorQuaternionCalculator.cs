@@ -1,8 +1,54 @@
 using System;
 using UnityEngine;
 
+
 public class SensorQuaternionCalculator : MonoBehaviour
 {
+    [Header("Gyro Mapping")]
+    [SerializeField] private SensorAxis gyroXUnity = SensorAxis.sensorX;
+    [SerializeField] private bool gyroXInvert = true;
+    [SerializeField] private SensorAxis gyroYUnity = SensorAxis.sensorZ;
+    [SerializeField] private bool gyroYInvert = true;
+    [SerializeField] private SensorAxis gyroZUnity = SensorAxis.sensorY;
+    [SerializeField] private bool gyroZInvert = true;
+
+    [Header("Accel Mapping")]
+    [SerializeField] private SensorAxis accelXUnity = SensorAxis.sensorX;
+    [SerializeField] private bool accelXInvert = false;
+    [SerializeField] private SensorAxis accelYUnity = SensorAxis.sensorZ;
+    [SerializeField] private bool accelYInvert = false;
+    [SerializeField] private SensorAxis accelZUnity = SensorAxis.sensorY;
+    [SerializeField] private bool accelZInvert = false;
+
+    private enum SensorAxis
+    {
+        sensorX,
+        sensorY,
+        sensorZ
+    }
+
+    private float GetGyro(MPU6050Data data, SensorAxis axis)
+    {
+        switch (axis)
+        {
+            case SensorAxis.sensorX: return data.gyroX;
+            case SensorAxis.sensorY: return data.gyroY;
+            case SensorAxis.sensorZ: return data.gyroZ;
+            default: return 0f;
+        }
+    }
+
+    private float GetAccel(MPU6050Data data, SensorAxis axis)
+    {
+        switch (axis)
+        {
+            case SensorAxis.sensorX: return data.accelX;
+            case SensorAxis.sensorY: return data.accelY;
+            case SensorAxis.sensorZ: return data.accelZ;
+            default: return 0f;
+        }
+    }
+
     [Header("Absolute 모드 제어 설정")]
     [Header("상보 필터(Complementary Filter) 자이로 계수 [0 ~ 1]")]
     [SerializeField, Range(0f, 1f)] private float gyroWeight = 0.96f;
@@ -126,8 +172,17 @@ public class SensorQuaternionCalculator : MonoBehaviour
         float deltaTime = Time.fixedDeltaTime;
 
         //축 매핑: Real MPU6050 Sensor -> Unity
-        Vector3 gyroMapped = new Vector3(-sensorData.gyroX, -sensorData.gyroZ, -sensorData.gyroY);
-        Vector3 accelMapped = new Vector3(sensorData.accelX, sensorData.accelZ, sensorData.accelY);
+        Vector3 gyroMapped = new Vector3(
+            GetGyro(sensorData, gyroXUnity) * (gyroXInvert ? -1f : 1f),
+            GetGyro(sensorData, gyroYUnity) * (gyroYInvert ? -1f : 1f),
+            GetGyro(sensorData, gyroZUnity) * (gyroZInvert ? -1f : 1f)
+            );
+
+        Vector3 accelMapped = new Vector3(
+            GetAccel(sensorData, accelXUnity) * (accelXInvert ? -1f : 1f),
+            GetAccel(sensorData, accelYUnity) * (accelYInvert ? -1f : 1f),
+            GetAccel(sensorData, accelZUnity) * (accelZInvert ? -1f : 1f)
+            );
 
         //자이로 처리 (로컬 회전 누적)
         // currentRotation이 월드 기준이므로, gyroPredictedRotation도 월드기준 결과물 쿼터니안
