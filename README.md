@@ -849,7 +849,10 @@ FSM의 핵심을 제대로 이해할 수 있었으며 IState의 인터페이스 
 			- MQTT 연결 기능 추가: PubSubClient 라이브러리를 통해 토큰 정보와 함께 MQTT 클라이언트를 구독하는 기능을 도입함. MQTT 호스트의 이름 또는 로컬 IP 주소를 이용함. WiFi와 같이 연결 끊김을 확인하고 발생 시 자동 재시도를 하는 알고리즘을 적용함.
 			- 연결 확인 ESP32 내부 LED 점등 기능 추가: WiFi, MQTT 연결이 모두 정상적으로 완료 시 ESP32에 내장된 푸른색 LED를 점등하여 인지할 수 있도록 함.
 			- 패킷 발행 전송: 연결된 MQTT 클라이언트에 publish 메서드를 통해 데이터 토픽과 함께 센서 데이터 패킷을 주기적으로 발행하는 기능을 추가함.
-			- > 토픽: flight/sensor, MQTT 포트번호 1883 이용.
+			
+     		![LED](https://github.com/user-attachments/assets/3868656c-d0c5-4aac-abbe-7663b5958378)
+    		> WiFi, MQTT 순서대로 연결 완료 시 파란 LED 점등하도록 추가. (붉은 LED는 전원)
+        	> 토픽: flight/sensor, MQTT 포트번호 1883 이용. (로컬 서버 mosquitto 이용, mqtt_Broker.bat 추가)
 
 - **소프트웨어 변경 사항(Unity)**:  
 	- 기존:   
