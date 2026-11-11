@@ -16,7 +16,6 @@ public class FlightHUD : MonoBehaviour
     [SerializeField] private WheelCollider backWheelCollider;
 
     [Header("Force 정보 컴포넌트")]
-    [SerializeField] private Slider engineSlider; //임시
     [SerializeField] private EngineController engineController;
     [SerializeField] private BrakeController brakeController;
     [SerializeField] private FlightLiftController flightLiftController;
@@ -27,8 +26,6 @@ public class FlightHUD : MonoBehaviour
     [SerializeField] private float updatePeriod = 0.1f;
 
     private string currentStateName = null;
-    private float initialHeight;
-    private float deltaHeight;
     private Quaternion absoluteQuaternion = Quaternion.identity;
     private Quaternion attitudeControlQuaternion = Quaternion.identity;
 
@@ -57,11 +54,6 @@ public class FlightHUD : MonoBehaviour
     private void SaveCurrentState(IState targetState)
     {
         this.currentStateName = targetState.GetStateName();
-
-        if (targetState is TakeoffState && targetTransform != null)
-        {
-            this.initialHeight = targetTransform.position.y;
-        }
     }
 
     void SaveAbsoluteQuaternion(Quaternion quaternionData)
@@ -88,11 +80,6 @@ public class FlightHUD : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
-    {
-        this.deltaHeight = targetTransform.position.y - this.initialHeight;
-    }
-
     void PrintGeneralInformation()
     {
         switch (currentStateName)
@@ -107,7 +94,7 @@ public class FlightHUD : MonoBehaviour
                 generalInfoText.text =
                     $"[ 지상 주행 상태 ({nameof(TaxiingState)}) ]\n" +
                     $"  속도: {targetRigidbody.linearVelocity.magnitude:F1} m/s\n" +
-                    $"  이륙 가능 속도: {flightStateController.GetTakeoffSpeed():F1} m/s 이상\n" +
+                    $"  이륙 가능 속도: {flightStateController.GetTaxiingToTakeoffSpeed():F1} m/s 이상\n" +
                     $"  조향각: {backWheelCollider.steerAngle:F1}°";
                 break;
 
@@ -115,7 +102,6 @@ public class FlightHUD : MonoBehaviour
                 generalInfoText.text =
                     $"[ 이륙 가능 상태 ({nameof(TakeoffState)}) ]\n" +
                     $"  속도: {targetRigidbody.linearVelocity.magnitude:F1} m/s\n" +
-                    $"  고도: {deltaHeight:F1} m\n" +
                     $"  기수 각도(Pitch): {(-1f)* GetInspectorAngle(targetTransform.eulerAngles.x):F1}°\n" +
                     $"  기수를 위로 올릴 시 비행 가능";
                 break;
@@ -123,16 +109,14 @@ public class FlightHUD : MonoBehaviour
             case nameof(FlyingState):
                 generalInfoText.text =
                     $"[ 비행 상태 ({nameof(FlyingState)}) ]\n" +
-                    $"  속도: {targetRigidbody.linearVelocity.magnitude:F1} m/s\n" +
-                    $"  고도: {deltaHeight:F1} m\n";
+                    $"  속도: {targetRigidbody.linearVelocity.magnitude:F1} m/s\n";
                 break;
 
             case nameof(LandingState):
                 generalInfoText.text =
                     $"[ 착륙 상태 ({nameof(LandingState)}) ]\n" +
                     $"  속도: {targetRigidbody.linearVelocity.magnitude:F1} m/s\n" +
-                    $"  고도: {deltaHeight:F1} m\n"+
-                    $"  착륙 가능 속도: {flightStateController.GetTaxiingTransitionSpeed():F1} m/s 이하\n"+
+                    $"  착륙 가능 속도: {flightStateController.GetLandingToTaxiingSpeed():F1} m/s 이하\n"+
                     $"  속도를 줄이세요";
                 break;
 
@@ -146,7 +130,6 @@ public class FlightHUD : MonoBehaviour
     {
         forceInfoText.text =
             $"[엔진 (ENGINE)]\n" +
-            $"엔진 출력: {engineSlider.value * 100:F1} %\n" +
             $"엔진 힘: {engineController.GetCurrentEnginePower():F1} N\n" +
             $"브레이크: {brakeController.GetCurrentBrakeForce():F1} N\n" +
             "\n" +

@@ -6,17 +6,31 @@ public class BrakeController : MonoBehaviour
     [SerializeField] private Rigidbody flightRigidbody;
     [SerializeField] private float brakeForce = 3000f;
 
-    //test
-    [SerializeField] private Slider engineSlider;
-
+    float currentEngineThrottle = 0f;
     private bool isbrakeEnabled = true;
     private float currentBrakeForce = 0; //For UI Print
+
+    private void OnEnable()
+    {
+        SensorManager.OnSliderValueUpdated += SaveSliderValue;
+    }
+
+    private void OnDisable()
+    {
+        SensorManager.OnSliderValueUpdated -= SaveSliderValue;
+    }
+
+    private void SaveSliderValue(float currentSliderValue)
+    {
+        currentEngineThrottle = currentSliderValue;
+    }
+
 
     private void FixedUpdate()
     {
         currentBrakeForce = 0f;
 
-        if (isbrakeEnabled && engineSlider.value == 0)
+        if (isbrakeEnabled && currentEngineThrottle < 0.05)
         {
             ApplyBrake();
         }

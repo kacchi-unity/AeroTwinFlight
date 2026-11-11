@@ -3,21 +3,18 @@ using UnityEngine;
 public class LandingState : IState
 {
     private FlightStateController flightStateController;
-    private TaxiingController taxiingController;
     private Rigidbody targetRigidbody;
 
-    private float taxiingTransitionSpeed;
+    private float landingToTaxiingSpeed;
 
     public LandingState(
         FlightStateController controller,
-        TaxiingController taxiingController,
         Rigidbody targetRigidbody,
-        float taxiingTransitionSpeed
+        float landingToTaxiingSpeed
         )
     {
         this.flightStateController = controller;
-        this.taxiingController = taxiingController;
-        this.taxiingTransitionSpeed = taxiingTransitionSpeed;
+        this.landingToTaxiingSpeed = landingToTaxiingSpeed;
         this.targetRigidbody = targetRigidbody;
 
     }
@@ -37,7 +34,7 @@ public class LandingState : IState
     public void FixedUpdate()
     {
         //flyingController.UpdateRotation();
-        if (targetRigidbody.linearVelocity.sqrMagnitude <= Mathf.Pow(taxiingTransitionSpeed,2))
+        if (targetRigidbody.linearVelocity.sqrMagnitude <= Mathf.Pow(landingToTaxiingSpeed, 2))
         {
             flightStateController.ChangeState(flightStateController.TaxiingState);
         }

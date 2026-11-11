@@ -3,32 +3,36 @@ using UnityEngine;
 public class TakeoffState : IState
 {
     private FlightStateController flightStateController;
-    private TaxiingController taxiingController;
     private TakeoffController takeoffController;
     private Rigidbody targetRigidbody;
-    private float takeoffSpeed;
+    private float takeoffToTaxiingSpeed;
+    private TakeoffGuideGUI takeoffGuideGUI;
 
 
     public TakeoffState(
         FlightStateController controller,
-        TaxiingController taxiingController,
         TakeoffController takeoffController,
         Rigidbody targetRigidbody,
-        float takeoffSpeed
+        float takeoffToTaxiingSpeed,
+        TakeoffGuideGUI takeoffGuideGUI
         )
     {
         this.flightStateController = controller;
-        this.taxiingController = taxiingController;
         this.takeoffController = takeoffController;
         this.targetRigidbody = targetRigidbody;
-        this.takeoffSpeed = takeoffSpeed;
+        this.takeoffToTaxiingSpeed = takeoffToTaxiingSpeed;
+        this.takeoffGuideGUI = takeoffGuideGUI;
     }
 
     public void Enter()
     {
         Debug.Log("Takeoff State 진입");
 
+        takeoffController.InitializeOffset();
+
         flightStateController.BothTriggerAirborne += OnBothTriggerAirborne;
+
+        takeoffGuideGUI.OnBlinkGUI();
     }
 
     public void Update()
@@ -38,11 +42,9 @@ public class TakeoffState : IState
 
     public void FixedUpdate()
     {
-        
-
         float currentSqrSpeed = targetRigidbody.linearVelocity.sqrMagnitude;
 
-        if (currentSqrSpeed < Mathf.Pow(takeoffSpeed, 2f))
+        if (currentSqrSpeed < Mathf.Pow(takeoffToTaxiingSpeed, 2f))
         {
             flightStateController.ChangeState(flightStateController.TaxiingState);
         }
@@ -56,6 +58,8 @@ public class TakeoffState : IState
         Debug.Log("Takeoff State 종료");
 
         flightStateController.BothTriggerAirborne -= OnBothTriggerAirborne;
+
+        takeoffGuideGUI.OffBlinkGUI();
     }
 
     public string GetStateName()

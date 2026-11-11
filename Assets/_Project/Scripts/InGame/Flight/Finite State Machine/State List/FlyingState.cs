@@ -24,7 +24,7 @@ public class FlyingState : IState
     {
         Debug.Log("Flying State 진입");
 
-        flyingController.InitializeRotationReferecne();
+        flyingController.InitializeRotationReference();
 
         flightStateController.BothTriggerGrounded += OnBothTriggerGrounded;
 

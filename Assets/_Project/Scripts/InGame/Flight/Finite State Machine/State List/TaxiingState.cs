@@ -5,25 +5,27 @@ public class TaxiingState : IState
     private FlightStateController flightStateController;
     private TaxiingController taxiingController;
     private Rigidbody targetRigidbody;
-    private float takeoffSpeed;
+    private float taxiingToTakeoffSpeed;
 
     public TaxiingState(
         FlightStateController flightStateController,
         TaxiingController taxiingController,
         Rigidbody targetRigidbody,
-        float takeoffSpeed
+        float taxiingToTakeoffSpeed
         )
     {
         this.flightStateController = flightStateController;
         this.taxiingController = taxiingController;
         this.targetRigidbody = targetRigidbody;
-        this.takeoffSpeed = takeoffSpeed;
+        this.taxiingToTakeoffSpeed = taxiingToTakeoffSpeed;
         
     }
 
     public void Enter()
     {
         Debug.Log("Taxiing State 진입");
+
+        taxiingController.ResetSteerAngle();
     }
 
     public void Update()
@@ -35,7 +37,7 @@ public class TaxiingState : IState
     {
         float currentSqrSpeed = targetRigidbody.linearVelocity.sqrMagnitude;
 
-        if (currentSqrSpeed >= Mathf.Pow(takeoffSpeed, 2f))
+        if (currentSqrSpeed >= Mathf.Pow(taxiingToTakeoffSpeed, 2f))
         {
             flightStateController.ChangeState(flightStateController.TakeoffState);
         }

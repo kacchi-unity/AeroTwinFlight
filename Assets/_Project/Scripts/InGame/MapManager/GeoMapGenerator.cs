@@ -202,4 +202,9 @@ public class GeoMapGenerator : MonoBehaviour
 
         fogMaterial.SetFloat(FogAmount, endRatio);
     }
+
+    public float GetHeightOffset()
+    {
+        return this.heightOffset;
+    }
 }

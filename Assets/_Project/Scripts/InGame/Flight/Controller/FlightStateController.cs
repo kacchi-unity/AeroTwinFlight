@@ -3,26 +3,29 @@ using UnityEngine;
 
 public class FlightStateController : MonoBehaviour
 {
-    [Header ("컨트롤러 컴포넌트")]
+    [Header("컨트롤러 컴포넌트")]
     [SerializeField] private EngineController flightEngineController;
     [SerializeField] private TaxiingController taxiingController;
     [SerializeField] private TakeoffController takeoffController;
     [SerializeField] private FlyingController flyingController;
     [SerializeField] private BrakeController brakeController;
     [SerializeField] private GeoMapGenerator geoMapGenerator;
+    [SerializeField] private TakeoffGuideGUI takeoffGuideGUI;
 
     [Header("상태 머신 필요 데이터")]
     [Tooltip("물리 Rigidbody")]
     [SerializeField] private Rigidbody flightRidigbody;
 
     [Tooltip("바닥 감지 콜라이더 등록")]
-    [SerializeField] private BoxCollider[]groundCheckColliders;
+    [SerializeField] private BoxCollider[] groundCheckColliders;
 
-    [Tooltip("비행 전 지상 주행 Taxiing 시 Takeoff 상태 전환 임계 속력 값")]
-    [SerializeField] private float takeoffSpeed = 28.7f;
+    [Tooltip("Taxiing 상태에서 Takeoff 상태 전환 임계 속력 값")]
+    [SerializeField] private float taxiingToTakeoffSpeed = 25f;
+    [Tooltip("Takeoff 상태에서 Taxiing 상태 전환 임계 속력 값")]
+    [SerializeField] private float takeoffToTaxiingSpeed = 23f;
 
-    [Tooltip("Landing 상태에서 Taxiing 상태 전환에 필요한 줄임 속력 값")]
-    [SerializeField] private float taxiingTransitionSpeed = 6f;
+    [Tooltip("Landing 상태에서 Taxiing 상태 전환 임계 속력 값")]
+    [SerializeField] private float landingToTaxiingSpeed = 6f;
 
     [Tooltip("Ground 레이어 태그 등록")]
     [SerializeField] private LayerMask groundLayer;
@@ -73,20 +76,21 @@ public class FlightStateController : MonoBehaviour
             this,
             taxiingController,
             flightRidigbody,
-            takeoffSpeed
+            taxiingToTakeoffSpeed
             );
 
         CalibratingState = new CalibratingState(
             flightEngineController,
-            taxiingController
+            taxiingController,
+            flyingController
             );
 
         TakeoffState = new TakeoffState(
             this,
-            taxiingController,
             takeoffController,
             flightRidigbody,
-            takeoffSpeed
+            takeoffToTaxiingSpeed,
+            takeoffGuideGUI
             );
 
         FlyingState = new FlyingState(
@@ -98,9 +102,8 @@ public class FlightStateController : MonoBehaviour
 
         LandingState = new LandingState(
             this,
-            taxiingController,
             flightRidigbody,
-            taxiingTransitionSpeed
+            landingToTaxiingSpeed
             );
 
         SetupTriggerDetector();
@@ -127,6 +130,8 @@ public class FlightStateController : MonoBehaviour
         if (CurrentState != CalibratingState)
         {
             stateBeforeCalibration = CurrentState;
+
+            CalibratingState.SetLastState(stateBeforeCalibration);
 
             ChangeState(CalibratingState);
 
@@ -207,13 +212,13 @@ public class FlightStateController : MonoBehaviour
         backGroundDetector.TouchStateChanged -= CheckAllGroundTrigger;
     }
 
-    public float GetTakeoffSpeed()
+    public float GetTaxiingToTakeoffSpeed()
     {
-        return this.takeoffSpeed;
+        return this.taxiingToTakeoffSpeed;
     }
 
-    public float GetTaxiingTransitionSpeed()
+    public float GetLandingToTaxiingSpeed()
     {
-        return this.taxiingTransitionSpeed;
+        return this.landingToTaxiingSpeed;
     }
 }

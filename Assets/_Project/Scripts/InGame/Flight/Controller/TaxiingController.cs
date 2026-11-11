@@ -29,12 +29,12 @@ public class TaxiingController : MonoBehaviour
     // Event
     private void OnEnable()
     {
-        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated += UpdateRotation;
+        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated += SaveRotation;
     }
 
     private void OnDisable()
     {
-        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated -= UpdateRotation;
+        SensorQuaternionCalculator.OnAttitudeControlQuaternionCalculated -= SaveRotation;
     }
 
     private void Awake()
@@ -59,8 +59,7 @@ public class TaxiingController : MonoBehaviour
             }
         }
     }
-
-    void UpdateRotation(Quaternion currentRotation)
+    void SaveRotation(Quaternion currentRotation)
     {
         currentACRoll = currentRotation.eulerAngles.z;
     }
@@ -68,9 +67,6 @@ public class TaxiingController : MonoBehaviour
     public void StartCalibration()
     {
         ResetPhysicsForce();
-        ResetSteerAngle();
-
-        Debug.Log("Taxiing: 물리 상태와 조향 값이 초기화되었습니다.");
     }
 
     private void ResetPhysicsForce()
@@ -80,23 +76,19 @@ public class TaxiingController : MonoBehaviour
             targetRigidbody.linearVelocity = Vector3.zero;
             targetRigidbody.angularVelocity = Vector3.zero;
         }
-
         if (LeftWheel != null)
         {
             LeftWheel.motorTorque = sleepPreventionTorque;
-            LeftWheel.steerAngle = 0f;
         }
 
         if (RightWheel != null)
         {
             RightWheel.motorTorque = sleepPreventionTorque;
-            RightWheel.steerAngle = 0f;
         }
 
         if (BackWheel != null)
         {
             BackWheel.motorTorque = sleepPreventionTorque;
-            BackWheel.steerAngle = 0f;
         }
     }
 

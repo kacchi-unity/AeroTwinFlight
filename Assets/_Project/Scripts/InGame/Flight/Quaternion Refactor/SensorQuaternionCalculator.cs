@@ -82,6 +82,9 @@ public class SensorQuaternionCalculator : MonoBehaviour
     private float initialYawRotation = 0f;
     private float virtualCurrentYaw_AC = 0f;
 
+    private float pitchOffset = 0f;
+    private float rollOffset = 0f;
+
     public static event Action<Quaternion> OnAbsoluteQuaternionCalculated;
     public static event Action<Quaternion> OnAttitudeControlQuaternionCalculated;
 
@@ -127,12 +130,20 @@ public class SensorQuaternionCalculator : MonoBehaviour
     {
         isCalculateAllowed = false;
         hasSensorData = false;
+
         Debug.Log("보정이 시작되어 쿼터니안 계산을 중단합니다.");
     }
 
     void FinishCalibrate()
     {
         ResetValue();
+
+        Vector3 forwardInWorld = absoluteQuaternion * Vector3.forward;
+        Vector3 upInWorld = absoluteQuaternion * Vector3.up;
+        Vector3 rightInWorld = absoluteQuaternion * Vector3.right;
+
+        pitchOffset = Mathf.Asin(Mathf.Clamp(forwardInWorld.y, -1f, 1f)) * Mathf.Rad2Deg * (-1f);
+        rollOffset = Mathf.Atan2(rightInWorld.y, upInWorld.y) * Mathf.Rad2Deg * (-1f);
 
         isCalculateAllowed = true;
         Debug.Log("보정이 끝나 쿼터니안 계산을 재개합니다.");
@@ -155,7 +166,7 @@ public class SensorQuaternionCalculator : MonoBehaviour
         absoluteQuaternion = initialRotation;
 
         //Process Attitude Control Reset
-        virtualCurrentYaw_AC = transform.eulerAngles.y;
+        //virtualCurrentYaw_AC = transform.eulerAngles.y;
     }
 
     /// <summary>
@@ -233,9 +244,13 @@ public class SensorQuaternionCalculator : MonoBehaviour
         float rawPitch = Mathf.Asin(Mathf.Clamp(forwardInWorld.y, -1f, 1f)) * Mathf.Rad2Deg * (-1f);
         float rawRoll = Mathf.Atan2(rightInWorld.y, upInWorld.y) * Mathf.Rad2Deg * (-1f);
 
+        //추가 보정 오프셋 차감
+        float adjustedPitch = rawPitch - pitchOffset;
+        float adjustedRoll = rawRoll - rollOffset;
+
         //적용할 Power 비율 계산 (-1.0 ~ 1.0)
-        float pitchPower = CalculatePowerRatio(rawPitch);
-        float rollPower = CalculatePowerRatio(rawRoll);
+        float pitchPower = CalculatePowerRatio(adjustedPitch);
+        float rollPower = CalculatePowerRatio(adjustedRoll);
 
         // 시각적 회전 각도 계산
         float targetPitch = pitchPower * maxVisibleTurnAngle;

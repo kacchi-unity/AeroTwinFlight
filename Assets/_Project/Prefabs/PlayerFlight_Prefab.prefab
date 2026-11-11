@@ -10,13 +10,16 @@ GameObject:
   m_Component:
   - component: {fileID: 1340990538901309394}
   - component: {fileID: 2501003353412100574}
+  - component: {fileID: 7944529979321277311}
   - component: {fileID: 7555113992879054109}
   - component: {fileID: 7286255558522925242}
   - component: {fileID: 8004415577616083281}
   - component: {fileID: 3528785451952548749}
   - component: {fileID: 4617684388127120718}
   - component: {fileID: 5579603810409380269}
+  - component: {fileID: 8429177505905276013}
   - component: {fileID: 2580968554993142571}
+  - component: {fileID: 5154068250936864616}
   m_Layer: 0
   m_Name: PlayerFlight_Prefab
   m_TagString: Untagged
@@ -56,7 +59,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlightEngineController
   flightRigidbody: {fileID: 3528785451952548749}
   maxEnginePower: 15013.5
-  slider: 0
+  brakeController: {fileID: 7944529979321277311}
+--- !u!114 &7944529979321277311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80b7ac1b637c004da1fbdec7f2d8067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BrakeController
+  flightRigidbody: {fileID: 3528785451952548749}
+  brakeForce: 3000
 --- !u!114 &7555113992879054109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +134,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1000
   m_LinearDamping: 0
-  m_AngularDamping: 2
+  m_AngularDamping: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -148,11 +165,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlightStateController
   flightEngineController: {fileID: 2501003353412100574}
   taxiingController: {fileID: 5579603810409380269}
-  flyingController: {fileID: 0}
-  flightRidigbody: {fileID: 0}
-  wheelColliders: []
-  takeoffSpeed: 28.7
-  takeoffHeightDelta: 0.5
+  takeoffController: {fileID: 8429177505905276013}
+  flyingController: {fileID: 2580968554993142571}
+  brakeController: {fileID: 7944529979321277311}
+  geoMapGenerator: {fileID: 0}
+  takeoffGuideGUI: {fileID: 5154068250936864616}
+  flightRidigbody: {fileID: 3528785451952548749}
+  groundCheckColliders:
+  - {fileID: 495962942069539028}
+  - {fileID: 2778690240205018199}
+  taxiingToTakeoffSpeed: 25
+  takeoffToTaxiingSpeed: 19
+  landingToTaxiingSpeed: 6
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &5579603810409380269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,6 +201,20 @@ MonoBehaviour:
   BackWheel: {fileID: 366823987498806601}
   maxSteerAngle: 55
   sleepPreventionTorque: 0.0001
+--- !u!114 &8429177505905276013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b8e0c659c24614c86024b237db5df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TakeoffController
+  targetRigidbody: {fileID: 3528785451952548749}
+  flightMode: 1
 --- !u!114 &2580968554993142571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,8 +227,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b664ac6134f94e4f8917b83838650dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingController
-  targetRigidbody: {fileID: 0}
+  targetRigidbody: {fileID: 3528785451952548749}
   flightMode: 1
+  mQTTManager: {fileID: 0}
+--- !u!114 &5154068250936864616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 612030310297159941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b199893bdecbd84c96b97f95e95a428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TakeoffGuideGUI
+  takeoffGuideGUI: {fileID: 0}
+  maxAlpha: 1
+  minAlpha: 0.3
+  blinkInterval: 0.3
 --- !u!1 &783591563108718537
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,8 +346,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2277495462579637783}
   - component: {fileID: 495962942069539028}
+  - component: {fileID: 7695115411865737882}
   m_Layer: 0
-  m_Name: LandingDetector_Front
+  m_Name: GroundDetector_Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -325,12 +384,24 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.25, y: 0.59368134, z: 1.7}
-  m_Center: {x: 0.00680542, y: -0.20315933, z: -0.0002329348}
+  m_Size: {x: 4.25, y: 1.0569882, z: 1.7}
+  m_Center: {x: 0.00680542, y: -0.43481278, z: -0.00023293495}
+--- !u!114 &7695115411865737882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940814364782606339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 601afef3709d1914d9a316307f8897f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TriggerDetector
 --- !u!1 &1053004654965483320
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,8 +636,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5748324917405889824}
   - component: {fileID: 2778690240205018199}
+  - component: {fileID: 2737121150710628439}
   m_Layer: 0
-  m_Name: LandingDetector_Back
+  m_Name: GroundDetector_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -602,12 +674,24 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.68, y: 0.59368134, z: 0.89}
-  m_Center: {x: 0.00680542, y: -0.20315933, z: -0.0002329348}
+  m_Size: {x: 3.68, y: 1.056988, z: 0.89}
+  m_Center: {x: 0.00680542, y: -0.4348128, z: -0.0002329348}
+--- !u!114 &2737121150710628439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997852593570276065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 601afef3709d1914d9a316307f8897f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TriggerDetector
 --- !u!1 &2178719742713697871
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,8 +1083,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.0234914, y: 1.6711273, z: 13.348778}
-  m_Center: {x: -0.010214065, y: 0.33556366, z: -1.781844}
+  m_Size: {x: 2.0234914, y: 1.1649246, z: 13.348778}
+  m_Center: {x: -0.01021409, y: 0.588665, z: -1.7818441}
 --- !u!1 &5954134055830385282
 GameObject:
   m_ObjectHideFlags: 0

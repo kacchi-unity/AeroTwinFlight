@@ -1,8 +1,11 @@
 using System;
 using UnityEngine;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
 public class ArduinoButtonManager : MonoBehaviour
 {
+    [SerializeField] private MQTTManager mQTTManager;
+
     //보정 호출 버튼
     public event Action CalibrationButtonClicked;
     private uint lastCountCalibrationButton = 0;
@@ -18,20 +21,59 @@ public class ArduinoButtonManager : MonoBehaviour
     private uint lastCountCameraChangeButton = 0;
     private bool isInitializedCameraChangeButton = false;
 
-
+    //Disconnection Detect Flag
+    private bool wasDisconnected = false;
 
     private void OnEnable()
     {
         SensorManager.OnButtonUpdated += ProcessButtonPress;
+
+        if (mQTTManager != null)
+        {
+            mQTTManager.ChangedMQTTConnection += SetDisconnectionFlag;
+        }
     }
 
     private void OnDisable()
     {
         SensorManager.OnButtonUpdated -= ProcessButtonPress;
+
+        if (mQTTManager != null)
+        {
+            mQTTManager.ChangedMQTTConnection -= SetDisconnectionFlag;
+        }
+    }
+
+    private void Start()
+    {
+        wasDisconnected = false;
+    }
+
+    private void SetDisconnectionFlag(ConnectionChanged currentState)
+    {
+        if (currentState != ConnectionChanged.Connected)
+        {
+            wasDisconnected = true;
+        }
+
+        else return;
     }
 
     void ProcessButtonPress(ArduinoSensorData targetData)
     {
+        //재연결 예외 처리
+        if (wasDisconnected)
+        {
+            wasDisconnected = false;
+
+            lastCountCalibrationButton = targetData.CalibrationButton;
+            lastCountMapChangeButton = targetData.MapChangeButton;
+            lastCountCameraChangeButton = targetData.CameraChangeButton;
+
+            Debug.Log("[Button] 재연결 직후 전체 버튼 카운트 동기화");
+            return;
+        }
+
         //보정 호출 버튼
         ProcessSingleButton(
             targetData.CalibrationButton,
@@ -72,7 +114,7 @@ public class ArduinoButtonManager : MonoBehaviour
 
         if (lastCount > currentCount)
         {
-            Debug.LogWarning($"[Button] 재부팅 감지");
+            Debug.Log($"[Button] 재부팅 감지");
             lastCount = currentCount;
             return;
         }
