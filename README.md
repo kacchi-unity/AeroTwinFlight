@@ -614,6 +614,10 @@ AOA란, 현재 비행기의 Pitch와 실제 비행기에 작용되는 속도 벡
 	- 보정 이벤트 호출 시 쿼터니안 계산 오브젝트 내 추가 오프셋 연산
 	- Velocity Save, Load 사용
 
+	<p align="center">
+  <video src="https://github.com/user-attachments/assets/118b1010-6799-4458-ab6d-c0aedcb7ca2e" width="100%" autoplay loop muted playsinline></video>
+</p>    
+
 #### **Taxiing State (지상 주행 상태)**  
 <p align="center">
   <video src="https://github.com/user-attachments/assets/b46daba8-1695-4828-84b1-be9d712be6cd" width="100%" autoplay loop muted playsinline></video>
@@ -1091,7 +1095,7 @@ WheelCollider 내부에서 실제로 어떻게 해당 상태를 처리하는지�
 
 	- **MQTT 내 메시지 비수신** 과 **MQTT 연결의 끊김** 구분의 부재: 메시지가 일정 시간동안 들어오지 않은 것을 MQTT 연결 끊김으로 처리하였기 때문이었음.
 
-	![BeforeWaitingState]()
+	![BeforeWaitingState](https://github.com/user-attachments/assets/daf514b5-5492-4747-9e6e-c72777c3e750)
 	
 	> MQTT 정상 연결 상태에서 ESP32 전원 차단 테스트 (패킷 메시지 비수신 발생 유도)
 
@@ -1114,7 +1118,9 @@ WheelCollider 내부에서 실제로 어떻게 해당 상태를 처리하는지�
 	- 위 WaitingForFirstPacket과 핵심 함수 HandleDataTimeout()을 도입하여 **MQTT 내 메시지 비수신** 과 **MQTT 연결의 끊김**을 스스로 구분할 수 있게됨.
 	- 검사 전 메시지 부재 간격, MQTT 재연결 시도 간격, MQTT 정상 연결 상태 검사 후 내 메시지 송신 유예 시간 간격 세 가지를 설정 가능하게 됨.
 
-	![AfterWaitingState]()
+	<p align="center">
+  <video src="https://github.com/user-attachments/assets/ce2834b7-a54c-48b3-a1f2-fd51e9e75710" width="100%" autoplay loop muted playsinline></video>
+</p>  
 
 	> 하드웨어 패킷 끊김 / MQTT 연결 끊김 GUI 구분
 	> Guide 모드: 제어 상실 시 Pitch, Roll 각도를 잡아주는 기능 추가
