@@ -228,6 +228,10 @@ Split을 사용 시, 기존 String 데이터 토큰을 쪼개 같은 주소에 �
 
 <p align="center">
   <video src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" autoplay loop muted playsinline></video></p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" />
+</p>
   
 > 런타임 드리프트 테스트 (40분, 32배속)  
 
