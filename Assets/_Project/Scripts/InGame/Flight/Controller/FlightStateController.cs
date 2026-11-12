@@ -11,10 +11,13 @@ public class FlightStateController : MonoBehaviour
     [SerializeField] private BrakeController brakeController;
     [SerializeField] private GeoMapGenerator geoMapGenerator;
     [SerializeField] private TakeoffGuideGUI takeoffGuideGUI;
+    [SerializeField] private FlightRespawnManager flightRespawnManager;
 
     [Header("상태 머신 필요 데이터")]
     [Tooltip("물리 Rigidbody")]
     [SerializeField] private Rigidbody flightRidigbody;
+    [Tooltip("위치 정보 Transform")]
+    [SerializeField] private Transform flightTransform;
 
     [Tooltip("바닥 감지 콜라이더 등록")]
     [SerializeField] private BoxCollider[] groundCheckColliders;
@@ -58,12 +61,22 @@ public class FlightStateController : MonoBehaviour
     {
         CalibrateManager.onStartCalibrate += StartCalibrate;
         CalibrateManager.onFinishCalibrate += FinishCalibrate;
+
+        if (flightRespawnManager != null)
+        {
+            flightRespawnManager.OnRespawnRequred += RespawnFlight;
+        }
     }
 
     private void OnDisable()
     {
         CalibrateManager.onStartCalibrate -= StartCalibrate;
         CalibrateManager.onFinishCalibrate -= FinishCalibrate;
+
+        if (flightRespawnManager != null)
+        {
+            flightRespawnManager.OnRespawnRequred -= RespawnFlight;
+        }
     }
 
     void Awake()
@@ -220,5 +233,21 @@ public class FlightStateController : MonoBehaviour
     public float GetLandingToTaxiingSpeed()
     {
         return this.landingToTaxiingSpeed;
+    }
+
+    private void RespawnFlight(Vector3 position, Quaternion rotation)
+    {
+        if (flightTransform != null)
+        {
+            //위치 초기화
+            flightTransform.SetPositionAndRotation(position, rotation);
+
+            //State
+            ChangeState(TaxiingState);
+
+            //물리 속도 초기화
+            flightRidigbody.linearVelocity = Vector3.zero;
+            flightRidigbody.angularVelocity = Vector3.zero;
+        }
     }
 }

@@ -37,9 +37,9 @@ const float sliderMinDeadZone = 0.08;
 const bool sliderValueReverse = true;
 
 //<Connection>
-const char* ssid = "Eh";     // 사용 중인 2.4GHz WIFI|Hotspot 이름
+const char* ssid = "Yesol";     // 사용 중인 2.4GHz WIFI|Hotspot 이름
 const char* password = "s1994s10hei321!"; // WIFI|Hotspot 비밀번호
-const char* mqtt_HostName = "192.168.45.12"; // 브로커 PC 이름
+const char* mqtt_HostName = "192.168.137.1"; // 브로커 PC 이름
 
 const char* dataTopic = "flight/sensor";
 

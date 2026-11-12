@@ -20,7 +20,7 @@ public class APIManager : MonoBehaviour
 
     void LoadAndApplyApiKey()
     {
-        TextAsset jsonFile = Resources.Load<TextAsset>("MapConfig");
+        TextAsset jsonFile = Resources.Load<TextAsset>("API/MapConfig");
 
         if (jsonFile == null)
         {

@@ -132,6 +132,15 @@
 ## 11/9 - 11/11
 - 공중 보정 기능 추가: 물리 엔진 Freezing, Rotation 맞춤 기능 개선
 
+## 11/12
+- 리스폰 기능 추가: Base Station 내 일정 고도 이하 추락 감지 및 안전 장소 이동 기능
+- 고도 계산 버그 수정
+
+- 비행 궤적 (Wing Tip) 이펙트 추가
+- 배경 음악 기능 추가: On/Off, 볼륨, StreamingAssets 파일
+
+- 빌드본 정상 테스트
+
 ## 기술적 도전 (Technical Challenges)
 ### 유니티 멀티 스레드 및 싱글 스레드 프레임 테스트
 - **문제 정의**: 동기식 데이터 대기 처리로 인한 유니티 메인 스레드 렌더링 프레임 드랍을 예상함.
@@ -229,10 +238,6 @@ Split을 사용 시, 기존 String 데이터 토큰을 쪼개 같은 주소에 �
 <p align="center">
   <video src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" autoplay loop muted playsinline></video></p>
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/e899c69b-6426-41e7-b281-b8d7e8f42b5e" width="100%" />
-</p>
-  
 > 런타임 드리프트 테스트 (40분, 32배속)  
 
 자이로 가중치가 1인 비행기 오브젝트만 시간이 경과함에 따라 미세하게 한쪽으로 쏠리는 드리프트 현상이 생김.
