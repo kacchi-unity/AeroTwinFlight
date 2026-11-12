@@ -137,9 +137,9 @@
 - 고도 계산 버그 수정
 
 - 비행 궤적 (Wing Tip) 이펙트 추가
-- 배경 음악 기능 추가: On/Off, 볼륨, StreamingAssets 파일
+- 배경 음악 기능 추가: On/Off, 볼륨, StreamingAssets 파일 응용
 
-- 빌드본 정상 테스트
+- 최종 빌드본 정상 테스트
 
 ## 기술적 도전 (Technical Challenges)
 ### 유니티 멀티 스레드 및 싱글 스레드 프레임 테스트
