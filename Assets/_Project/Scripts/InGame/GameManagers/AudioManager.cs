@@ -18,12 +18,13 @@ public class AudioManager : MonoBehaviour
 
     private List<AudioClip> clips = new List<AudioClip>();
     private bool isAudioLoaded = false;
+    private int currentIndex = 0;
 
     private void OnEnable()
     {
         if (audioToggle != null)
         {
-            audioToggle.onValueChanged.AddListener(ToggleRandomAudio);
+            audioToggle.onValueChanged.AddListener(ToggleCurrentAudio);
         }
 
         if (audioSlider != null)
@@ -36,7 +37,7 @@ public class AudioManager : MonoBehaviour
     {
         if (audioToggle != null)
         {
-            audioToggle.onValueChanged.RemoveListener(ToggleRandomAudio);
+            audioToggle.onValueChanged.RemoveListener(ToggleCurrentAudio);
         }
 
         if (audioSlider != null)
@@ -66,7 +67,15 @@ public class AudioManager : MonoBehaviour
 
         if (audioToggle != null)
         {
-            ToggleRandomAudio(audioToggle.isOn);
+            ToggleCurrentAudio(audioToggle.isOn);
+        }
+    }
+
+    private void Update()
+    {
+        if (isAudioLoaded && audioToggle != null && audioToggle.isOn && !audioSource.isPlaying && clips.Count > 0)
+        {
+            PlayNextAudio();
         }
     }
 
@@ -112,11 +121,11 @@ public class AudioManager : MonoBehaviour
 
         if (audioToggle != null && audioToggle.isOn)
         {
-            ToggleRandomAudio(true);
+            ToggleCurrentAudio(true);
         }
     }
 
-    private void ToggleRandomAudio(bool toggleState)
+    private void ToggleCurrentAudio(bool toggleState)
     {
         if (!isAudioLoaded || clips.Count == 0 || audioSource == null)
         {
@@ -125,10 +134,7 @@ public class AudioManager : MonoBehaviour
 
         if (toggleState)
         {
-            int randomIndex = Random.Range(0, clips.Count);
-            AudioClip selectedClip = clips[randomIndex];
-
-            audioSource.clip = selectedClip;
+            audioSource.clip = clips[currentIndex];
             audioSource.Play();
             audioSource.volume = audioSlider.value;
         }
@@ -137,6 +143,20 @@ public class AudioManager : MonoBehaviour
         {
             audioSource.Stop();
         }
+    }
+
+    private void PlayNextAudio()
+    {
+        if (clips.Count == 0 || audioSource == null)
+        {
+            return;
+        }
+
+        currentIndex = (currentIndex + 1) % clips.Count;
+
+        audioSource.clip = clips[currentIndex];
+        audioSource.Play();
+        audioSource.volume = audioSlider.value;
     }
 
     private void SetSliderVolume(float sliderValue)

@@ -145,26 +145,19 @@ public class GeoMapGenerator : MonoBehaviour
             this.cesiumObject.SetActive(true);
             this.baseStationObject.SetActive(false);
 
-            //cesium SetActive 기다리기 -> 한 프레임 대기 (Cesium 내부 데이터 갱신 보장)
+            //cesium SetActive 기다리기 -> n 프레임 대기 (Cesium 내부 데이터 갱신 보장)
+            yield return null;
             yield return null;
 
             if (cesiumGeoreference != null)
             {
-                double3 targetEcef = CesiumWgs84Ellipsoid.LongitudeLatitudeHeightToEarthCenteredEarthFixed(
-                    new double3(targetData.Longitude, targetData.Latitude, targetData.Height)
+                cesiumGeoreference.SetOriginLongitudeLatitudeHeight(
+                    targetData.Longitude,
+                    targetData.Latitude,
+                    targetData.Height
                 );
 
-                double3 currentEcefAtTarget = cesiumGeoreference.TransformUnityPositionToEarthCenteredEarthFixed(
-                    new double3(targetWorldPosition.x, targetWorldPosition.y, targetWorldPosition.z)
-                );
-
-                double3 ecefDelta = targetEcef - currentEcefAtTarget;
-
-                cesiumGeoreference.SetOriginEarthCenteredEarthFixed(
-                    cesiumGeoreference.ecefX + ecefDelta.x,
-                    cesiumGeoreference.ecefY + ecefDelta.y,
-                    cesiumGeoreference.ecefZ + ecefDelta.z
-                );
+                cesiumGeoreference.transform.position = targetWorldPosition;
             }
         }
 

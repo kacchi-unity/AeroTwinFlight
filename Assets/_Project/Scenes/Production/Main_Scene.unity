@@ -3338,7 +3338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0734b8d0cd40ab47b85e6160b85f616, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MQTTManager
-  hostIP: 192.168.137.1
+  hostIP: 192.168.45.48
   dataTopics: flight/sensor
   checkInterval: 2
   reconnectionWaitTime: 3
@@ -3840,7 +3840,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3971,7 +3971,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 52.23999, y: -93.82}
+  m_AnchoredPosition: {x: 52.239746, y: -93.82007}
   m_SizeDelta: {x: 1400.7, y: 226.6}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &282745298
@@ -9705,6 +9705,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1178855391}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &688962850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 688962851}
+  - component: {fileID: 688962852}
+  m_Layer: 0
+  m_Name: SkyboxManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &688962851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688962850}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -162.7391, y: 60.47645, z: -116.04787}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1178855391}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &688962852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 688962850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0fe763e36586b4daebdb8a36a29371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyboxManager
+  skyboxMaterials:
+  - {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4e154bf235e41704bbd6bbc6fd6c63f6, type: 2}
+  - {fileID: 2100000, guid: 72deae4d18418f94688abef8e8483df0, type: 2}
+  - {fileID: 2100000, guid: d4454f71d85928744be7771e2143dab7, type: 2}
+  skyboxChangeKeyCode: 49
 --- !u!1 &704345299
 GameObject:
   m_ObjectHideFlags: 0
@@ -10641,7 +10691,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -2.6297, y: -27.599976}
+  m_AnchoredPosition: {x: -2.6297, y: -27.600098}
   m_SizeDelta: {x: 1045, y: 344}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &805490258
@@ -11832,7 +11882,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -174.58374, y: -270}
+  m_AnchoredPosition: {x: -174.5835, y: -270}
   m_SizeDelta: {x: 349.1773, y: 425.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &969741438
@@ -13683,7 +13733,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 359.40002, y: 120.369995}
+  m_AnchoredPosition: {x: 359.3999, y: 120.37012}
   m_SizeDelta: {x: 685, y: 230.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1166977359
@@ -13889,6 +13939,7 @@ Transform:
   - {fileID: 688676392}
   - {fileID: 2000225823}
   - {fileID: 371911944}
+  - {fileID: 688962851}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1200307390
@@ -17736,7 +17787,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -31.03003, y: -74.100006}
+  m_AnchoredPosition: {x: -31.029785, y: -74.1001}
   m_SizeDelta: {x: 684.5903, y: 226.6}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &1694880493
